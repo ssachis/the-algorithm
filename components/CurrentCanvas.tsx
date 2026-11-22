@@ -434,7 +434,6 @@ export default function CurrentCanvas({
 
   const zoomClass = view.k < 0.55 ? "z-far" : view.k < 0.95 ? "z-mid" : "z-near";
   const focused = selectedId && selectedId !== original.id;
-  const o = layout.pos[original.id];
 
   return (
     <div className="cc">
@@ -463,7 +462,7 @@ export default function CurrentCanvas({
             <div key={`${mode}-${l.key}`} className="cc-lane" style={{ top: TOP + i * LANE_H, height: LANE_H }} />
           ))}
 
-          {/* currents: fine wave paths from your Short to each similar Short */}
+          {/* currents: ambient wave lanes */}
           <svg className="cc-paths" width={layout.W} height={layout.H} key={`paths-${mode}`}>
             {layout.lanes.map((l, i) => {
               const y = TOP + i * LANE_H + LANE_H / 2;
@@ -475,22 +474,6 @@ export default function CurrentCanvas({
                   (_, k) => `Q${-seg * 2 + k * seg + seg / 2},${y + (k % 2 ? 10 : -10)} ${-seg * 2 + (k + 1) * seg},${y}`
                 ).join(" ");
               return <path key={`field-${l.key}`} d={d} className="cc-field" style={{ animationDelay: `${i * -1.3}s` }} />;
-            })}
-            {videos.map((v) => {
-              const p = layout.pos[v.id];
-              const x1 = o.x + o.w;
-              const y1 = o.y + o.h / 2;
-              const x2 = p.x;
-              const y2 = p.y + p.h / 2;
-              const dx = Math.max((x2 - x1) * 0.5, 40);
-              return (
-                <path
-                  key={v.id}
-                  d={`M${x1},${y1} C${x1 + dx},${y1} ${x2 - dx},${y2} ${x2},${y2}`}
-                  pathLength={1}
-                  className={`cc-path ${selectedId === v.id ? "on" : ""} ${pulseId === v.id ? "pulse" : ""} ${hoverId === v.id ? "hover" : ""}`}
-                />
-              );
             })}
             <path
               className="cc-reveal"
