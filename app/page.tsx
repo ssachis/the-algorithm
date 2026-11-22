@@ -136,7 +136,7 @@ export default function Home() {
 
       {phase === "done" && data && (
         <div className="fs">
-          <header className="fs-bar">
+          <header className="fs-top">
             <a
               href="/"
               className="wordmark serif"
@@ -149,51 +149,28 @@ export default function Home() {
               wave<span>.</span>
             </a>
             <span className="fs-query">
-              &ldquo;{data.query}&rdquo;
-              {data.source === "mock" ? " · illustrative demo data" : ""}
+              {data.query}
+              {data.source === "mock" ? " · illustrative" : ""}
             </span>
-            <div className="fs-right">
-              <div className="chips">
-                <button className="chip" aria-pressed={view === "waves"} onClick={() => setView("waves")}>
-                  Waves
-                </button>
-                <button className="chip" aria-pressed={view === "grid"} onClick={() => setView("grid")}>
-                  Grid
-                </button>
-                <button className="chip" aria-pressed={view === "list"} onClick={() => setView("list")}>
-                  List
-                </button>
-              </div>
-              {view !== "list" ? (
-                <ModeToggle mode={mode} onChange={setMode} />
-              ) : (
-                <div className="chips">
-                  {SORTS.map((s) => (
-                    <button key={s.id} className="chip" aria-pressed={sort === s.id} onClick={() => setSort(s.id)}>
-                      {s.label}
-                    </button>
-                  ))}
-                </div>
-              )}
-              <ShareCard data={data} mode={mode} />
-              <button className="chip" aria-pressed={showWhy} onClick={() => setShowWhy((v) => !v)}>
-                See why →
+            <nav className="fs-actions">
+              <button className="ghost" aria-pressed={showWhy} onClick={() => setShowWhy((v) => !v)}>
+                Why
               </button>
+              <ShareCard data={data} mode={mode} />
               <button
-                className="linkbtn"
+                className="ghost"
                 onClick={() => {
                   setPhase("idle");
                   setData(null);
                 }}
               >
-                New search
+                New
               </button>
-            </div>
+            </nav>
           </header>
 
           <div className={`fs-body ${selected ? "with-inspector" : ""}`}>
             <div className="fs-canvas">
-              <SourceChips sources={data.verdict.trend.sources} />
               {view === "waves" ? (
                 <CurrentCanvas
                   original={data.original}
@@ -218,6 +195,30 @@ export default function Home() {
               ) : (
                 <VideoList videos={data.similar} sort={sort} selectedId={selectedId} onSelect={setSelectedId} />
               )}
+
+              <SourceChips sources={data.verdict.trend.sources} />
+
+              <div className="dock" role="toolbar" aria-label="View options">
+                <div className="dock-seg">
+                  {(["waves", "grid", "list"] as const).map((v) => (
+                    <button key={v} aria-pressed={view === v} onClick={() => setView(v)}>
+                      {v[0].toUpperCase() + v.slice(1)}
+                    </button>
+                  ))}
+                </div>
+                <span className="dock-sep" />
+                {view !== "list" ? (
+                  <ModeToggle mode={mode} onChange={setMode} />
+                ) : (
+                  <div className="dock-seg">
+                    {SORTS.map((s) => (
+                      <button key={s.id} aria-pressed={sort === s.id} onClick={() => setSort(s.id)}>
+                        {s.label}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
 
             {selected && (
@@ -230,18 +231,19 @@ export default function Home() {
             )}
           </div>
 
-          <TwinCard twins={data.elsewhere} />
-
           {showWhy && (
-            <div className="fs-why">
+            <div className="sheet" role="dialog" aria-label="Why these outcomes differ">
+              <button className="fs-close" onClick={() => setShowWhy(false)} aria-label="Close">
+                ×
+              </button>
+              <TwinCard twins={data.elsewhere} />
               <Verdict verdict={data.verdict} original={data.original} videos={data.similar} />
+              <p className="footer">
+                Public metrics only. We never claim to know YouTube&apos;s internal ranking. Trend context powered by
+                You.com.
+              </p>
             </div>
           )}
-
-          <p className="footer">
-            Public metrics only. We never claim to know YouTube&apos;s internal ranking. Trend context powered by
-            You.com.
-          </p>
         </div>
       )}
     </main>

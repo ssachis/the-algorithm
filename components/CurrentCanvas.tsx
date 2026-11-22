@@ -7,10 +7,13 @@ import type { Video } from "@/lib/types";
 import { formatCount, formatX, perfLevel, PERF_LABEL } from "@/lib/score";
 import type { Mode } from "./RippleMap";
 
-const CARD_W = 96;
+// Card size = views (the bigger the Short, the more people watched it).
+const MIN_W = 66;
+const MAX_W = 138;
+const CARD_W = MAX_W; // largest card (used for spacing / focus)
 const THUMB_H = (CARD_W * 16) / 9; // Shorts are vertical
-const CARD_H = THUMB_H + 50;
-const LANE_H = CARD_H + 34;
+const CARD_H = THUMB_H;
+const LANE_H = CARD_H + 44;
 const LABEL_W = 150;
 const ORIGIN_X = LABEL_W + 20;
 const FIRST_X = ORIGIN_X + CARD_W + 120;
@@ -121,25 +124,35 @@ export default function CurrentCanvas({
     const lo = Math.min(...sims);
     const hi = Math.max(...sims);
 
-    const pos: Record<string, { x: number; y: number }> = {};
+    const logs = [original, ...videos].map((v) => Math.log10(v.views + 1));
+    const vlo = Math.min(...logs);
+    const vhi = Math.max(...logs);
+    const sizeOf = (v: Video) => {
+      const t = vhi > vlo ? (Math.log10(v.views + 1) - vlo) / (vhi - vlo) : 0.5;
+      const w = MIN_W + (MAX_W - MIN_W) * t;
+      return { w, h: (w * 16) / 9 };
+    };
+
+    const pos: Record<string, { x: number; y: number; w: number; h: number; lane: number }> = {};
     const byLane: Video[][] = lanes.map(() => []);
     videos.forEach((v) => byLane[laneOf(v)].push(v));
     let maxX = FIRST_X + SPREAD;
     byLane.forEach((list, li) => {
-      const y = TOP + li * LANE_H + (LANE_H - CARD_H) / 2;
-      let prev = -Infinity;
+      let prevEnd = -Infinity;
       list
         .map((v) => ({ v, tx: FIRST_X + (1 - (hi > lo ? (v.similarity - lo) / (hi - lo) : 0.5)) * SPREAD }))
         .sort((a, b) => a.tx - b.tx)
         .forEach(({ v, tx }) => {
-          const x = Math.max(tx, prev + CARD_W + GAP);
-          prev = x;
-          pos[v.id] = { x, y };
-          maxX = Math.max(maxX, x + CARD_W);
+          const { w, h } = sizeOf(v);
+          const x = Math.max(tx, prevEnd + GAP);
+          prevEnd = x + w;
+          pos[v.id] = { x, y: TOP + li * LANE_H + (LANE_H - h) / 2, w, h, lane: li };
+          maxX = Math.max(maxX, x + w);
         });
     });
     const oLane = laneOf(original);
-    pos[original.id] = { x: ORIGIN_X, y: TOP + oLane * LANE_H + (LANE_H - CARD_H) / 2 };
+    const os = sizeOf(original);
+    pos[original.id] = { x: ORIGIN_X, y: TOP + oLane * LANE_H + (LANE_H - os.h) / 2, ...os, lane: oLane };
     return { lanes, pos, W: maxX + 60, H: TOP * 2 + lanes.length * LANE_H };
   }, [videos, original, mode]);
 
@@ -167,7 +180,7 @@ export default function CurrentCanvas({
       const p = layout.pos[id];
       if (!p) return;
       setAnimate(true);
-      setView({ k, x: box.w / 2 - (p.x + CARD_W / 2) * k, y: box.h / 2 - (p.y + CARD_H / 2) * k });
+      setView({ k, x: box.w / 2 - (p.x + p.w / 2) * k, y: box.h / 2 - (p.y + p.h / 2) * k });
     },
     [box, layout, view.k]
   );
@@ -273,8 +286,7 @@ export default function CurrentCanvas({
       if (v.id === fromId) continue;
       const p = layout.pos[v.id];
       const dx = p.x - from.x;
-      const dy = p.y - from.y;
-      const sameLane = Math.abs(dy) < 1;
+      const sameLane = p.lane === from.lane;
       let ok = false;
       let score = 0;
       if (dir === "left" || dir === "right") {
@@ -282,7 +294,7 @@ export default function CurrentCanvas({
         score = Math.abs(dx);
       } else {
         const wantDown = dir === "down";
-        const laneGap = Math.round(dy / LANE_H);
+        const laneGap = p.lane - from.lane;
         ok = !sameLane && (wantDown ? laneGap > 0 : laneGap < 0);
         // Adjacent lane first, then the horizontally closest card in it.
         score = Math.abs(laneGap) * 100000 + Math.abs(dx);
@@ -314,6 +326,40 @@ export default function CurrentCanvas({
       focusOn(next);
     }
   };
+
+  // Ambient: every 3s a different Short "makes a wave" (its current lights up), until you pick one.
+  const order = useMemo(
+    () =>
+      videos
+        .slice()
+        .sort((a, b) =>
+          mode === "reach" ? (b.outperformance ?? 0) - (a.outperformance ?? 0) : b.views - a.views
+        )
+        .slice(0, 8)
+        .map((v) => v.id),
+    [videos, mode]
+  );
+  const [pulse, setPulse] = useState(0);
+  useEffect(() => {
+    if (selectedId) return;
+    const t = setInterval(() => setPulse((n) => n + 1), 3000);
+    return () => clearInterval(t);
+  }, [selectedId]);
+  const pulseId = !selectedId && order.length ? order[pulse % order.length] : null;
+
+  // Arrow keys work anywhere on the page (not only when the canvas has focus).
+  const keyRef = useRef(onKeyDown);
+  keyRef.current = onKeyDown;
+  useEffect(() => {
+    const h = (e: KeyboardEvent) => {
+      const t = e.target as HTMLElement | null;
+      if (t && (t.tagName === "INPUT" || t.tagName === "TEXTAREA" || t.isContentEditable)) return;
+      if (t && boxRef.current?.contains(t)) return; // the canvas' own handler already ran
+      keyRef.current(e as unknown as React.KeyboardEvent);
+    };
+    window.addEventListener("keydown", h);
+    return () => window.removeEventListener("keydown", h);
+  }, []);
 
   const zoomClass = view.k < 0.55 ? "z-far" : view.k < 0.95 ? "z-mid" : "z-near";
   const focused = selectedId && selectedId !== original.id;
@@ -348,18 +394,29 @@ export default function CurrentCanvas({
 
           {/* currents: fine wave paths from your Short to each similar Short */}
           <svg className="cc-paths" width={layout.W} height={layout.H} key={`paths-${mode}`}>
+            {layout.lanes.map((l, i) => {
+              const y = TOP + i * LANE_H + LANE_H / 2;
+              const seg = 120;
+              const d =
+                `M-${seg * 2},${y} ` +
+                Array.from(
+                  { length: Math.ceil(layout.W / seg) + 4 },
+                  (_, k) => `Q${-seg * 2 + k * seg + seg / 2},${y + (k % 2 ? 10 : -10)} ${-seg * 2 + (k + 1) * seg},${y}`
+                ).join(" ");
+              return <path key={`field-${l.key}`} d={d} className="cc-field" style={{ animationDelay: `${i * -1.3}s` }} />;
+            })}
             {videos.map((v) => {
               const p = layout.pos[v.id];
-              const x1 = o.x + CARD_W;
-              const y1 = o.y + THUMB_H / 2;
+              const x1 = o.x + o.w;
+              const y1 = o.y + o.h / 2;
               const x2 = p.x;
-              const y2 = p.y + THUMB_H / 2;
+              const y2 = p.y + p.h / 2;
               const dx = Math.max((x2 - x1) * 0.5, 40);
               return (
                 <path
                   key={v.id}
                   d={`M${x1},${y1} C${x1 + dx},${y1} ${x2 - dx},${y2} ${x2},${y2}`}
-                  className={`cc-path ${selectedId === v.id ? "on" : ""}`}
+                  className={`cc-path ${selectedId === v.id ? "on" : ""} ${pulseId === v.id ? "pulse" : ""}`}
                 />
               );
             })}
@@ -376,10 +433,10 @@ export default function CurrentCanvas({
               <div
                 key={v.id}
                 className={`cc-pos ${spot === v.id ? "on-top" : ""}`}
-                style={{ transform: `translate(${p.x}px, ${p.y}px)`, width: CARD_W }}
+                style={{ transform: `translate(${p.x}px, ${p.y}px)`, width: p.w }}
                 onPointerDown={(e) => e.stopPropagation()}
               >
-                <div className={`cc-in ${spot === v.id ? "cc-spot" : ""}`} style={{ animationDelay: `${200 + i * 40}ms` }}>
+                <div className={`cc-in ${spot === v.id ? "cc-spot" : ""} ${pulseId === v.id ? "cc-pulse" : ""}`} style={{ animationDelay: `${200 + i * 40}ms` }}>
                   <ShortCard
                     v={v}
                     mode={mode}
