@@ -9,7 +9,7 @@ Same idea. Different outcomes.
 
 Two creators post the same 5 AM routine in the same week. One gets 48K views. The other gets 800.
 
-We built The Algorithm at Creator Economy Hack NYC to answer the question underneath that gap. Paste a YouTube Short, and it maps similar Shorts on the same idea. Flip one toggle and the map shows which ones beat their creator's usual reach, not just which ones had the most views.
+We built Wave at Creator Economy Hack NYC to answer the question underneath that gap. Paste a YouTube Short, and it maps similar Shorts on the same idea. Flip one toggle and the map shows which ones beat their creator's usual reach, not just which ones had the most views.
 
 What it does:
 - Finds similar Shorts and sizes them by views ÷ subscribers

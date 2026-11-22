@@ -11,7 +11,7 @@ Ask the room: *"Why?"*
 > Note: the 48K / 800 pair is the mock demo's illustrative numbers. If we use it on stage, say so. The live demo should use real Shorts.
 
 ## 2. Paste a Short live (0:20–0:50)
-- Paste the first demo Short into the box.
+- Paste the first demo Short into Wave.
 - The ripple map appears. Your Short sits in the centre; similar Shorts ripple out. Closer = more similar.
 - Say: *"Every dot is a real Short on the same idea, sized by views."*
 
