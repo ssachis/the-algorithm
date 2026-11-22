@@ -2,8 +2,8 @@
 
 **Same idea. Different outcomes.**
 
-Paste a YouTube Short and Wave finds other Shorts on the same trend or idea. They ripple out from
-yours on a map, sized by views. One toggle removes creator size, so you see which videos actually beat
+Paste a YouTube Short and Wave finds other Shorts on the same trend or idea. They spread out from
+yours as waves, in lanes, sized by views. One toggle removes creator size, so you see which videos actually beat
 their creator's usual reach. You.com explains, with sources, why the trend is moving right now, and you
 leave with one concrete experiment for your next post.
 
@@ -13,13 +13,13 @@ Built at **Creator Economy Hack NYC** (You.com × localhost:nyc × GenZtea).
 
 **Live demo:** [TBD: live link]  ·  **Pitch script:** [docs/PITCH.md](docs/PITCH.md)  ·  **Demo post:** [docs/POST.md](docs/POST.md)
 
-## The ripple map
+## The waves
 
 | Raw views | Remove creator size |
 | --- | --- |
-| ![Ripple map sized by raw views](docs/screenshots/ripple-views.png) | ![Ripple map sized by views divided by subscribers](docs/screenshots/ripple-reach.png) |
+| ![Waves in lanes by raw views](docs/screenshots/waves-views.png) | ![Waves in lanes by views divided by subscribers](docs/screenshots/waves-reach.png) |
 
-Screen recording of the toggle: [docs/screenshots/ripple-toggle-demo.mp4](docs/screenshots/ripple-toggle-demo.mp4)
+Screen recording of the toggle (an earlier recording of the map view): [docs/screenshots/ripple-toggle-demo.mp4](docs/screenshots/ripple-toggle-demo.mp4)
 
 Screenshots use the demo data (`USE_MOCK=1`), which is fictional.
 

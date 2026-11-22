@@ -12,7 +12,7 @@ Ask the room: *"Why?"*
 
 ## 2. Paste a Short live (0:20–0:50)
 - Paste the first demo Short into Wave.
-- The ripple map appears. Your Short sits in the centre; similar Shorts ripple out. Closer = more similar.
+- The waves canvas appears. Your Short sits on the left; similar Shorts flow out to the right, in lanes. Closer = more similar.
 - Say: *"Every dot is a real Short on the same idea, sized by views."*
 
 ## 3. Flip "Remove creator size" (0:50–1:15)
