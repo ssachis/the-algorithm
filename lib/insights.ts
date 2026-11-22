@@ -23,7 +23,7 @@ export function observedFacts(original: Video, similar: Video[]): string[] {
   const ops = similar.map((v) => v.outperformance).filter((x): x is number => x != null);
   if (original.outperformance != null && ops.length) {
     facts.push(
-      `Your Short's views are ${formatX(original.outperformance)} its channel's subscribers. The median similar Short sits at ${formatX(median(ops))}.`
+      `Your Short got ${formatX(original.outperformance)} ${original.baselineMedian ? "your usual views" : "your subscriber count"}. The median similar Short got ${formatX(median(ops))} its creator's usual.`
     );
   }
   if (top.length >= 3) {

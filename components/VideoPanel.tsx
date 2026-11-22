@@ -1,5 +1,5 @@
 import type { Video } from "@/lib/types";
-import { formatCount, formatX, perfLevel, PERF_DEFINITION, PERF_LABEL } from "@/lib/score";
+import { formatCount, formatX, perfDefinition, perfLevel, perfUnit, PERF_LABEL } from "@/lib/score";
 import { sharedTerms } from "@/lib/insights";
 import ShortPlayer from "./ShortPlayer";
 
@@ -33,7 +33,7 @@ export default function VideoPanel({ video, original }: { video: Video; original
         <div className="stat hero-stat">
           {/* Hidden subscriber counts show as "hidden", never as a dash or a crash. */}
           <div className="v">{video.outperformance == null ? "hidden" : formatX(video.outperformance)}</div>
-          <div className="k">views ÷ subscribers</div>
+          <div className="k">{perfUnit(video)}</div>
         </div>
         <div className="stat">
           <div className="v">{formatCount(video.views)}</div>
@@ -49,7 +49,7 @@ export default function VideoPanel({ video, original }: { video: Video; original
         </div>
       </div>
 
-      <div className="definition">{PERF_DEFINITION}</div>
+      <div className="definition">{perfDefinition(video)}</div>
 
       {why && (
         <div className="why">

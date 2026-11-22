@@ -93,4 +93,9 @@ export const mockResponse: AnalyzeResponse = {
   },
   generatedAt: new Date(NOW).toISOString(),
   source: "mock",
+  elsewhere: [
+    { platform: "TikTok", title: "Example: #5amclub on TikTok (illustrative)", url: "https://www.tiktok.com/tag/5amclub" },
+    { platform: "Reddit", title: "Example: r/productivity 5AM thread (illustrative)", url: "https://www.reddit.com/r/productivity/" },
+    { platform: "Instagram", title: "Example: #morningroutine reels (illustrative)", url: "https://www.instagram.com/explore/tags/morningroutine/" },
+  ],
 };

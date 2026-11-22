@@ -17,7 +17,9 @@ export type Video = {
   hashtags: string[];
   // Computed by lib/score.ts
   similarity: number; // 0..1, 1 = the original video
-  outperformance: number | null; // views / max(subscribers, 100)
+  outperformance: number | null; // views / creator's median recent Short (fallback: views / max(subs, 100))
+  baselineMedian?: number | null; // median views of the creator's recent Shorts
+  baselineN?: number; // how many recent Shorts that median is based on
   viewsPerDay: number;
 };
 
@@ -45,4 +47,6 @@ export type AnalyzeResponse = {
   verdict: Verdict;
   generatedAt: string;
   source: "live" | "cache" | "mock";
+  // Where the same idea shows up outside YouTube right now (You.com web search).
+  elsewhere?: { platform: string; title: string; url: string; snippet?: string }[];
 };

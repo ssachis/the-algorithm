@@ -1,8 +1,8 @@
 // Live pipeline: one Short URL -> AnalyzeResponse. Server only.
 import type { AnalyzeResponse, Video } from "./types";
 import { extractHashtags, keywords, outperformance, similarity, viewsPerDay } from "./score";
-import { getSubscribers, getVideos, parseVideoId, quota, searchShorts, YouTubeError, type RawVideo } from "./youtube";
-import { buildVerdict } from "./youcom";
+import { getChannels, getRecentUploadIds, getVideos, parseVideoId, quota, searchShorts, YouTubeError, type RawVideo } from "./youtube";
+import { buildVerdict, elsewhere } from "./youcom";
 import { cached, readDemo } from "./cache";
 
 const MAX_SIMILAR = 20;
@@ -84,7 +84,7 @@ async function runLive(id: string): Promise<AnalyzeResponse> {
   const candidates = (await getVideos(Array.from(ids))).filter(
     (v) => v.durationSec > 0 && v.durationSec <= MAX_SHORT_SEC
   );
-  const subs = await getSubscribers([orig.channelId, ...candidates.map((c) => c.channelId)]);
+  const { subs, uploads } = await getChannels([orig.channelId, ...candidates.map((c) => c.channelId)]);
 
   const original = toVideo(orig, subs[orig.channelId] ?? null, null);
   const similar = candidates
@@ -92,10 +92,57 @@ async function runLive(id: string): Promise<AnalyzeResponse> {
     .sort((a, b) => b.similarity - a.similarity)
     .slice(0, MAX_SIMILAR);
 
+  await applyBaselines([original, ...similar], uploads);
+
   if (similar.length < 3) throw new AnalyzeError("We found too few similar Shorts for this one. Try another.", 404);
 
   const query = queries[0];
-  const verdict = await buildVerdict({ query, original, similar });
+  const [verdict, other] = await Promise.all([
+    buildVerdict({ query, original, similar }),
+    elsewhere(query).catch(() => []),
+  ]);
 
-  return { query, original, similar, verdict, generatedAt: new Date().toISOString(), source: "live" };
+  return {
+    query,
+    original,
+    similar,
+    verdict,
+    elsewhere: other,
+    generatedAt: new Date().toISOString(),
+    source: "live",
+  };
+}
+
+const BASELINE_MIN = 3;
+const BASELINE_MAX = 10;
+
+/**
+ * Creator-relative performance, like outlier scores in creator tools:
+ * views ÷ median views of the creator's last ~10 Shorts (excluding this one).
+ * Cost: 1 unit per channel (playlistItems) + 1 unit per 50 videos. Falls back to views ÷ subs.
+ */
+async function applyBaselines(videos: Video[], uploads: Record<string, string>) {
+  const channels = Array.from(new Set(videos.map((v) => v.channelId))).filter((c) => uploads[c]);
+  const recent: Record<string, string[]> = {};
+  await Promise.all(channels.map(async (c) => (recent[c] = await getRecentUploadIds(uploads[c]))));
+
+  const allIds = Array.from(new Set(Object.values(recent).flat()));
+  const stats = new Map((await getVideos(allIds)).map((r) => [r.id, r]));
+
+  for (const v of videos) {
+    const views = (recent[v.channelId] ?? [])
+      .filter((id) => id !== v.id)
+      .map((id) => stats.get(id))
+      .filter((r): r is RawVideo => !!r && r.durationSec > 0 && r.durationSec <= MAX_SHORT_SEC)
+      .slice(0, BASELINE_MAX)
+      .map((r) => r.views)
+      .sort((a, b) => a - b);
+    if (views.length < BASELINE_MIN) continue;
+    const m = Math.floor(views.length / 2);
+    const median = views.length % 2 ? views[m] : (views[m - 1] + views[m]) / 2;
+    if (median <= 0) continue;
+    v.baselineMedian = median;
+    v.baselineN = views.length;
+    v.outperformance = v.views / median;
+  }
 }

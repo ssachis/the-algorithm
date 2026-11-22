@@ -396,7 +396,7 @@ export default function CurrentCanvas({
       </div>
       <div className="cc-legend">
         {mode === "reach"
-          ? "Lanes = views ÷ subscribers (rough, not a ranking signal). Glow = beat their usual reach."
+          ? "Lanes = views vs. each creator's usual (median of their recent Shorts). Rough, not a ranking signal. Glow = breakout."
           : "Lanes = raw public views. Switch to “Remove creator size” to compare fairly."}{" "}
         Drag to pan · scroll to zoom. Shift-click a second Short to compare.
       </div>
@@ -423,7 +423,7 @@ export function CompareTray({ a, b, onClose }: { a: Video; b: Video; onClose: ()
   const rows: { k: string; a: string; b: string; diff: string }[] = [
     { k: "Views", a: formatCount(a.views), b: formatCount(b.views), diff: signed(views, formatCount) },
     {
-      k: "Views ÷ subscribers",
+      k: "vs. their usual",
       a: opA == null ? "hidden" : formatX(opA),
       b: opB == null ? "hidden" : formatX(opB),
       diff: opA == null || opB == null ? "not comparable (hidden)" : `${opB >= opA ? "+" : "−"}${Math.abs(opB - opA).toFixed(1)}×`,
