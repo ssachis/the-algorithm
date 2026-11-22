@@ -13,12 +13,12 @@ const MIN_R = 9;
 const MAX_R = 36;
 const GOLDEN = Math.PI * (3 - Math.sqrt(5));
 
-// soft mist -> deep forest, by log10(relative performance) from 0.1x to 100x
+// soft mist -> deep blue, by log10(relative performance) from 0.1x to 100x
 export function perfColor(op: number | null): string {
-  if (op == null) return "#d3ddd6";
+  if (op == null) return "#d5dde6";
   const t = Math.min(Math.max((Math.log10(op) + 1) / 3, 0), 1);
-  const a = [222, 231, 225];
-  const b = [41, 58, 50];
+  const a = [213, 221, 230];
+  const b = [11, 61, 145];
   return `rgb(${a.map((x, i) => Math.round(x + (b[i] - x) * t)).join(",")})`;
 }
 
@@ -103,7 +103,7 @@ export default function RippleMap({
                 cx={x}
                 cy={y}
                 r={r}
-                fill={mode === "views" ? "#c9d6cd" : color}
+                fill={mode === "views" ? "#9fb6cf" : color}
                 style={{ transition: "r .8s cubic-bezier(.22,1,.36,1), fill .8s" }}
               />
               {v.thumbnail && (

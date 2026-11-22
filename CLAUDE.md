@@ -1,4 +1,4 @@
-# The Algorithm — instructions for coding agents
+# Wave — instructions for coding agents
 
 **Product:** Paste a YouTube Short → find similar Shorts on the same idea → show them as a ripple map
 → explain why some took off (content, timing, creator size) → give one next experiment.
@@ -32,8 +32,8 @@ lib/mock-data.ts          fictional demo data in the exact AnalyzeResponse shape
 1. **Stay inside your issue's files.** If you must touch a file owned by someone else, say so in the PR.
 2. **`lib/types.ts` is the contract.** UI reads only `AnalyzeResponse`. Backend returns only `AnalyzeResponse`.
 3. **Never commit keys.** Use `.env.local`. Read keys only on the server (route handlers / `lib/*` used by routes).
-4. **Design language:** quiet, editorial, still water. Warm ivory `#FAF9F6`, mist `#E8EFEB`, sage `#A8BCAF`,
-   forest `#293A32` (see `:root` in globals.css). Accent only for selection or meaningful performance.
+4. **Design language:** quiet, editorial, still water. Near-white `#FBFCFD`, mist `#EEF3F8`, water blue `#3B7DD8`,
+   deep blue `#0B3D91` (see `:root` in globals.css). Accent only for selection or meaningful performance.
    Evidence discipline in UI: Observed / Hypotheses / Unknown are always separate. Performance labels
    (Below usual <0.5×, Around usual, Strong 1.5–3×, Outlier >3×) are project-defined; show the definition. Serif (`.serif`) for voice,
    Inter for data. Generous spacing, rounded cards, slow eased motion. No emojis in UI, no charts libraries,
@@ -53,3 +53,8 @@ lib/mock-data.ts          fictional demo data in the exact AnalyzeResponse shape
 ## You.com
 - Search the trend/idea for **why it's moving now** → `verdict.trend.summary` + `sources`.
 - Generate the verdict (patterns, timing, unknowns, next experiment) grounded in our computed numbers.
+
+## Before the demo
+- **Check keys:** open `http://localhost:3000/api/health` → youtube `ok`, youcom `ok (n sources)`.
+- **Preload demo Shorts:** open `http://localhost:3000/api/preload?url=<shorts link>` for each demo Short,
+  then commit the new `demo/<id>.json` files. They are served instantly with zero quota, even offline.

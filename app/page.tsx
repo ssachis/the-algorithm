@@ -75,7 +75,7 @@ export default function Home() {
             setData(null);
           }}
         >
-          the algorithm<span>.</span>
+          wave<span>.</span>
         </a>
         <span className="eyebrow">Creator intelligence</span>
       </header>
