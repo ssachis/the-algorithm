@@ -1176,3 +1176,13 @@ html, body { overflow-x: hidden; }
 .sheet .buckets li { font-size: clamp(12px, 1.6vh, 14px); line-height: 1.45; margin-bottom: 4px; }
 .sheet .trend { margin-top: 12px; }
 .sheet .twin-card { margin-bottom: 6px; padding: 12px 16px; }
+
+/* Why sheet: lift off the bottom edge (clear of the dock) and keep a visible scrollbar */
+.sheet {
+  bottom: 24px; border-radius: 22px; border-bottom: 1px solid var(--line);
+  max-height: calc(100vh - 96px); overflow-y: auto; scrollbar-gutter: stable;
+  scrollbar-width: thin; scrollbar-color: var(--sage) transparent;
+}
+.sheet::-webkit-scrollbar { width: 8px; }
+.sheet::-webkit-scrollbar-track { background: transparent; }
+.sheet::-webkit-scrollbar-thumb { background: var(--sage); border-radius: 999px; }
