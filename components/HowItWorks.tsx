@@ -1,8 +1,8 @@
 const STEPS = [
   { title: "Drop in a Short", body: "Paste any YouTube Shorts link." },
   {
-    title: "See the ripples",
-    body: "Similar Shorts spread out from yours, sized by views or by how far they beat their creator's usual reach.",
+    title: "See the waves",
+    body: "Similar Shorts flow out from yours, in lanes by views or by how far they beat their creator's usual reach.",
   },
   {
     title: "Make a bigger wave",

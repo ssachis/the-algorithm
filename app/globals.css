@@ -335,3 +335,66 @@ button { font: inherit; cursor: pointer; }
 .nf-title { font-size: clamp(36px, 7vw, 48px); line-height: 1.05; letter-spacing: -0.015em; margin: 14px 0 12px; }
 .nf-line { color: var(--ink-2); margin: 0 0 32px; }
 .nf-btn { display: inline-block; text-decoration: none; }
+
+/* ---------- The Current (components/CurrentCanvas.tsx) ---------- */
+.cc { position: relative; padding: 0 12px 12px; }
+.cc-box {
+  position: relative; height: 600px; overflow: hidden; border-radius: 14px; background: #eff5fa;
+  border: 1px solid var(--line); cursor: grab; touch-action: none; user-select: none;
+}
+.cc-box.grabbing { cursor: grabbing; }
+.cc-world { position: absolute; left: 0; top: 0; transform-origin: 0 0; will-change: transform; }
+.cc-world.anim { transition: transform .7s var(--ease); }
+.cc-lane { position: absolute; left: 0; right: 0; border-top: 1px dashed #dce6f0; }
+.cc-lane:first-child { border-top: 0; }
+.cc-lane-label { position: absolute; left: 16px; top: 14px; font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-3); width: 130px; line-height: 1.4; }
+.cc-paths { position: absolute; left: 0; top: 0; pointer-events: none; overflow: visible; }
+.cc-path { fill: none; stroke: #c9dbee; stroke-width: 1.2; opacity: 0; animation: cc-fade .8s var(--ease) .5s forwards; }
+.cc-path.on { stroke: var(--water); stroke-width: 2; }
+.cc-reveal { fill: none; stroke: var(--water); stroke-width: 2; opacity: .5; stroke-dasharray: 4000; stroke-dashoffset: 4000; animation: cc-wave 1.6s var(--ease) forwards, cc-out .6s ease 1.4s forwards; }
+@keyframes cc-wave { to { stroke-dashoffset: 0; } }
+@keyframes cc-out { to { opacity: 0; } }
+@keyframes cc-fade { to { opacity: 1; } }
+.cc-pos { position: absolute; left: 0; top: 0; transition: transform .8s var(--ease); }
+.cc-in { animation: cc-rise .6s var(--ease) both; }
+@keyframes cc-rise { from { opacity: 0; transform: translateY(10px) scale(.96); } to { opacity: 1; transform: none; } }
+
+.cc-card {
+  display: block; width: 100%; padding: 0; text-align: left; background: var(--surface); color: inherit;
+  border: 1px solid var(--line); border-radius: 12px; overflow: hidden; cursor: pointer;
+  transition: transform .25s var(--ease), box-shadow .25s var(--ease), border-color .25s, opacity .3s;
+}
+.cc-card:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(32, 58, 86, .12); border-color: #c9dbee; }
+.cc-card.selected { border-color: var(--water); box-shadow: 0 0 0 2px var(--water), 0 10px 24px rgba(32, 58, 86, .16); }
+.cc-card.origin { border-color: var(--deep); box-shadow: 0 0 0 2px var(--deep); }
+.cc-card.dim { opacity: .45; }
+.cc-card.glow { box-shadow: 0 0 0 1px rgba(77, 143, 214, .5), 0 0 28px rgba(77, 143, 214, .45); }
+.cc-thumb { position: relative; aspect-ratio: 9 / 16; background: #dcEAf6; }
+.cc-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.cc-ph { width: 100%; height: 100%; background: linear-gradient(160deg, #eff5fa, #dceaf6); }
+.cc-badge { position: absolute; left: 6px; top: 6px; font-size: 10px; padding: 2px 7px; border-radius: 999px; background: rgba(255,255,255,.92); color: var(--ink); font-weight: 600; }
+.cc-badge.outlier { background: var(--deep); color: #fff; }
+.cc-badge.strong { background: var(--water); color: #fff; }
+.cc-badge.you { background: var(--deep); color: #fff; }
+.cc-meta { padding: 6px 8px 8px; transition: opacity .3s var(--ease); }
+.cc-creator { font-size: 10px; color: var(--ink-3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.cc-title { font-size: 11px; line-height: 1.3; color: var(--ink); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.cc-line { font-size: 10px; color: var(--ink-3); margin-top: 3px; white-space: nowrap; }
+/* semantic zoom */
+.z-far .cc-meta { opacity: 0; }
+.z-far .cc-badge { transform: scale(1.6); transform-origin: left top; }
+.z-mid .cc-line { opacity: 0; }
+.z-far .cc-lane-label { font-size: 22px; width: 160px; }
+
+.cc-axis { position: absolute; left: 16px; right: 16px; bottom: 10px; display: flex; justify-content: space-between; font-size: 11px; color: var(--ink-3); pointer-events: none; }
+.cc-toolbar {
+  position: absolute; right: 24px; top: 12px; display: flex; align-items: center; gap: 2px; padding: 4px;
+  background: var(--surface); border: 1px solid var(--line); border-radius: 999px; box-shadow: var(--shadow);
+}
+.cc-toolbar button { border: 0; background: transparent; padding: 6px 10px; border-radius: 999px; font-size: 13px; color: var(--ink-2); }
+.cc-toolbar button:hover { background: var(--mist); color: var(--ink); }
+.cc-pct { font-size: 12px; color: var(--ink-3); min-width: 40px; text-align: center; }
+.cc-sep { width: 1px; height: 18px; background: var(--line); margin: 0 4px; }
+.cc-legend { font-size: 12px; color: var(--ink-3); padding: 10px 4px 0; }
+.waves-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 14px; padding: 16px 20px 20px; }
+@media (prefers-reduced-motion: reduce) { .cc-world.anim, .cc-pos { transition: none; } }

@@ -1,5 +1,5 @@
 "use client";
-// "Share your ripple": downloads a 1080×1350 PNG (LinkedIn / X) of the ripple map,
+// "Share your wave": downloads a 1080×1350 PNG (LinkedIn / X) of the ripple map,
 // the headline, the top outperformer and the wordmark. Owner: Khyati (issue #5).
 //
 // Usage (Sachi, app/page.tsx):
@@ -175,7 +175,7 @@ export default function ShareCard({ data, mode }: { data: AnalyzeResponse; mode:
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = `wave-${data.query.toLowerCase().replace(/[^a-z0-9]+/g, "-").slice(0, 40) || "ripple"}.png`;
+      a.download = `wave-${data.query.toLowerCase().replace(/[^a-z0-9]+/g, "-").slice(0, 40) || "waves"}.png`;
       document.body.appendChild(a);
       a.click();
       a.remove();
@@ -190,7 +190,7 @@ export default function ShareCard({ data, mode }: { data: AnalyzeResponse; mode:
   return (
     <div className="share">
       <button className="btn share-btn" onClick={download} disabled={busy}>
-        {busy ? "Making your card…" : "Share your ripple"}
+        {busy ? "Making your card…" : "Share your wave"}
       </button>
       {error && <span className="error">{error}</span>}
     </div>

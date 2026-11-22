@@ -17,7 +17,7 @@ export default function ModeToggle({ mode, onChange }: { mode: Mode; onChange: (
   }, [mode]);
 
   return (
-    <div className="toggle" role="group" aria-label="Size ripples by">
+    <div className="toggle" role="group" aria-label="Arrange waves by">
       <span className="thumb" style={{ left: thumb.left, width: thumb.width }} />
       {OPTIONS.map((o) => (
         <button

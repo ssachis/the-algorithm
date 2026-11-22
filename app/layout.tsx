@@ -8,16 +8,16 @@ const serif = Instrument_Serif({ subsets: ["latin"], weight: "400", style: ["nor
 export const metadata: Metadata = {
   title: "Wave — Same idea. Different outcomes.",
   description:
-    "Paste a YouTube Short, see similar Shorts ripple out from yours, and learn why some took off.",
+    "Paste a YouTube Short, see where your idea travels, and learn why some versions took off.",
   openGraph: {
     title: "Wave — Same idea. Different outcomes.",
-    description: "Paste a YouTube Short, see similar Shorts ripple out from yours, and learn why some took off.",
+    description: "Paste a YouTube Short, see where your idea travels, and learn why some versions took off.",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
     title: "Wave — Same idea. Different outcomes.",
-    description: "Paste a YouTube Short, see similar Shorts ripple out from yours, and learn why some took off.",
+    description: "Paste a YouTube Short, see where your idea travels, and learn why some versions took off.",
   },
 };
 

@@ -2,7 +2,8 @@
 import { useEffect, useState } from "react";
 import DropInput from "@/components/DropInput";
 import Rings from "@/components/Rings";
-import RippleMap, { type Mode } from "@/components/RippleMap";
+import { type Mode } from "@/components/RippleMap";
+import CurrentCanvas, { ShortCard } from "@/components/CurrentCanvas";
 import ModeToggle from "@/components/ModeToggle";
 import VideoPanel from "@/components/VideoPanel";
 import VideoList, { SORTS, type Sort } from "@/components/VideoList";
@@ -17,7 +18,7 @@ const LOADING_LINES = [
   "Reading the original video…",
   "Looking for related videos…",
   "Comparing creator baselines…",
-  "Preparing your comparison…",
+  "Laying out your content landscape…",
 ];
 
 const DEMO_URL = "https://youtube.com/shorts/demo";
@@ -27,7 +28,7 @@ export default function Home() {
   const [data, setData] = useState<AnalyzeResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [mode, setMode] = useState<Mode>("views");
-  const [view, setView] = useState<"map" | "list">("map");
+  const [view, setView] = useState<"waves" | "grid" | "list">("waves");
   const [sort, setSort] = useState<Sort>("similar");
   const [selectedId, setSelectedId] = useState<string>("");
   const [line, setLine] = useState(0);
@@ -54,7 +55,7 @@ export default function Home() {
       setData(d);
       setSelectedId(d.original.id);
       setMode("views");
-      setView("map");
+      setView("waves");
       setPhase("done");
     } catch (e) {
       setError(e instanceof Error ? e.message : "Something went wrong.");
@@ -88,11 +89,11 @@ export default function Home() {
             <Rings size={980} />
           </div>
           <div className="hero-inner rise">
-            <span className="eyebrow">Same idea. Different outcomes.</span>
+            <span className="eyebrow">Every idea makes waves.</span>
             <h1 className="serif">
-              Your idea didn&apos;t
+              See where your idea
               <br />
-              <em>stop with you.</em>
+              <em>travels.</em>
             </h1>
             <p className="lede">
               Find Shorts built around a similar idea, compare how they performed against their creators&apos;
@@ -140,14 +141,17 @@ export default function Home() {
             <div className="card map-wrap rise">
               <div className="controls">
                 <div className="chips">
-                  <button className="chip" aria-pressed={view === "map"} onClick={() => setView("map")}>
-                    Ripples
+                  <button className="chip" aria-pressed={view === "waves"} onClick={() => setView("waves")}>
+                    Waves
+                  </button>
+                  <button className="chip" aria-pressed={view === "grid"} onClick={() => setView("grid")}>
+                    Grid
                   </button>
                   <button className="chip" aria-pressed={view === "list"} onClick={() => setView("list")}>
                     List
                   </button>
                 </div>
-                {view === "map" ? (
+                {view !== "list" ? (
                   <ModeToggle mode={mode} onChange={setMode} />
                 ) : (
                   <div className="chips">
@@ -159,14 +163,27 @@ export default function Home() {
                   </div>
                 )}
               </div>
-              {view === "map" ? (
-                <RippleMap
+              {view === "waves" ? (
+                <CurrentCanvas
                   original={data.original}
                   videos={data.similar}
                   mode={mode}
                   selectedId={selectedId}
                   onSelect={setSelectedId}
                 />
+              ) : view === "grid" ? (
+                <div className="waves-grid">
+                  {[data.original, ...data.similar].map((v) => (
+                    <ShortCard
+                      key={v.id}
+                      v={v}
+                      mode={mode}
+                      selected={selectedId === v.id}
+                      isOrigin={v.id === data.original.id}
+                      onClick={() => setSelectedId(v.id)}
+                    />
+                  ))}
+                </div>
               ) : (
                 <VideoList videos={data.similar} sort={sort} selectedId={selectedId} onSelect={setSelectedId} />
               )}

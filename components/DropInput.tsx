@@ -27,7 +27,7 @@ export default function DropInput({
         autoFocus
       />
       <button className="btn" type="submit" disabled={disabled || !url.trim()}>
-        Find similar videos
+        Explore similar videos
       </button>
     </form>
   );

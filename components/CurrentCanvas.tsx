@@ -1,0 +1,324 @@
+"use client";
+// "The Current": a pan/zoom canvas of Short cards in lanes.
+//   x = similarity (left = closest to your idea), lanes = raw views or creator-relative performance.
+//   Semantic zoom: far = thumbnails only, mid = + creator/title, near = full card.
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import type { Video } from "@/lib/types";
+import { formatCount, formatX, perfLevel, PERF_LABEL } from "@/lib/score";
+import type { Mode } from "./RippleMap";
+
+const CARD_W = 96;
+const THUMB_H = (CARD_W * 16) / 9; // Shorts are vertical
+const CARD_H = THUMB_H + 50;
+const LANE_H = CARD_H + 34;
+const LABEL_W = 150;
+const ORIGIN_X = LABEL_W + 20;
+const FIRST_X = ORIGIN_X + CARD_W + 120;
+const SPREAD = 820;
+const GAP = 18;
+const TOP = 24;
+
+type Lane = { key: string; label: string; test: (v: Video) => boolean };
+
+const REACH_LANES: Lane[] = [
+  { key: "outlier", label: "Outlier · over 3×", test: (v) => perfLevel(v.outperformance) === "outlier" },
+  { key: "strong", label: "Strong · 1.5–3×", test: (v) => perfLevel(v.outperformance) === "strong" },
+  { key: "around", label: "Around usual", test: (v) => perfLevel(v.outperformance) === "around" },
+  { key: "below", label: "Below usual · under 0.5×", test: (v) => perfLevel(v.outperformance) === "below" },
+  { key: "na", label: "No baseline (subs hidden)", test: (v) => v.outperformance == null },
+];
+const VIEW_LANES: Lane[] = [
+  { key: "1m", label: "1M+ views", test: (v) => v.views >= 1_000_000 },
+  { key: "100k", label: "100K–1M views", test: (v) => v.views >= 100_000 && v.views < 1_000_000 },
+  { key: "10k", label: "10K–100K views", test: (v) => v.views >= 10_000 && v.views < 100_000 },
+  { key: "lt10k", label: "Under 10K views", test: (v) => v.views < 10_000 },
+];
+
+const ago = (iso: string) => {
+  const d = Math.round((Date.now() - new Date(iso).getTime()) / 86_400_000);
+  return d <= 0 ? "today" : d < 30 ? `${d}d` : d < 365 ? `${Math.round(d / 30)}mo` : `${Math.round(d / 365)}y`;
+};
+
+export function ShortCard({
+  v,
+  mode,
+  selected,
+  dim,
+  isOrigin,
+  onClick,
+}: {
+  v: Video;
+  mode: Mode;
+  selected: boolean;
+  dim?: boolean;
+  isOrigin?: boolean;
+  onClick: () => void;
+}) {
+  const lvl = perfLevel(v.outperformance);
+  const breakout = mode === "reach" && (lvl === "outlier" || lvl === "strong");
+  const title = v.title.replace(/#\w+/g, "").trim();
+  return (
+    <button
+      className={`cc-card ${selected ? "selected" : ""} ${dim ? "dim" : ""} ${breakout ? "glow" : ""} ${isOrigin ? "origin" : ""}`}
+      onClick={onClick}
+      aria-label={`${title} by ${v.channelTitle}`}
+    >
+      <div className="cc-thumb">
+        {v.thumbnail ? <img src={v.thumbnail} alt="" loading="lazy" draggable={false} /> : <div className="cc-ph" />}
+        {isOrigin && <span className="cc-badge you">your Short</span>}
+        {!isOrigin && mode === "reach" && v.outperformance != null && (
+          <span className={`cc-badge ${lvl}`}>{formatX(v.outperformance)}</span>
+        )}
+        {!isOrigin && mode === "views" && <span className="cc-badge plain">{formatCount(v.views)}</span>}
+      </div>
+      <div className="cc-meta">
+        <div className="cc-creator">{v.channelTitle}</div>
+        <div className="cc-title">{title}</div>
+        <div className="cc-line">
+          {formatCount(v.views)} · {ago(v.publishedAt)}
+          {!isOrigin && ` · ${Math.round(v.similarity * 100)}%`}
+        </div>
+      </div>
+    </button>
+  );
+}
+
+export default function CurrentCanvas({
+  original,
+  videos,
+  mode,
+  selectedId,
+  onSelect,
+}: {
+  original: Video;
+  videos: Video[];
+  mode: Mode;
+  selectedId: string;
+  onSelect: (id: string) => void;
+}) {
+  const boxRef = useRef<HTMLDivElement>(null);
+  const [box, setBox] = useState({ w: 800, h: 600 });
+  const [view, setView] = useState({ x: 0, y: 0, k: 0.6 });
+  const [animate, setAnimate] = useState(true);
+  const drag = useRef<{ x: number; y: number; vx: number; vy: number; moved: boolean } | null>(null);
+  const fitted = useRef(false);
+
+  // ---- layout (world coordinates) ----
+  const layout = useMemo(() => {
+    const lanes = (mode === "reach" ? REACH_LANES : VIEW_LANES).filter(
+      (l) => l.key !== "na" || [original, ...videos].some(l.test)
+    );
+    const laneOf = (v: Video) => Math.max(0, lanes.findIndex((l) => l.test(v)));
+    const sims = videos.map((v) => v.similarity);
+    const lo = Math.min(...sims);
+    const hi = Math.max(...sims);
+
+    const pos: Record<string, { x: number; y: number }> = {};
+    const byLane: Video[][] = lanes.map(() => []);
+    videos.forEach((v) => byLane[laneOf(v)].push(v));
+    let maxX = FIRST_X + SPREAD;
+    byLane.forEach((list, li) => {
+      const y = TOP + li * LANE_H + (LANE_H - CARD_H) / 2;
+      let prev = -Infinity;
+      list
+        .map((v) => ({ v, tx: FIRST_X + (1 - (hi > lo ? (v.similarity - lo) / (hi - lo) : 0.5)) * SPREAD }))
+        .sort((a, b) => a.tx - b.tx)
+        .forEach(({ v, tx }) => {
+          const x = Math.max(tx, prev + CARD_W + GAP);
+          prev = x;
+          pos[v.id] = { x, y };
+          maxX = Math.max(maxX, x + CARD_W);
+        });
+    });
+    const oLane = laneOf(original);
+    pos[original.id] = { x: ORIGIN_X, y: TOP + oLane * LANE_H + (LANE_H - CARD_H) / 2 };
+    return { lanes, pos, W: maxX + 60, H: TOP * 2 + lanes.length * LANE_H };
+  }, [videos, original, mode]);
+
+  // ---- size + fit ----
+  useLayoutEffect(() => {
+    const el = boxRef.current;
+    if (!el) return;
+    const ro = new ResizeObserver(() => setBox({ w: el.clientWidth, h: el.clientHeight }));
+    ro.observe(el);
+    setBox({ w: el.clientWidth, h: el.clientHeight });
+    return () => ro.disconnect();
+  }, []);
+
+  const fit = useCallback(() => {
+    const k = Math.min(box.w / layout.W, box.h / layout.H) * 0.96;
+    setAnimate(true);
+    setView({ k, x: (box.w - layout.W * k) / 2, y: (box.h - layout.H * k) / 2 });
+  }, [box, layout]);
+
+  const focusOn = useCallback(
+    (id: string, k = Math.max(view.k, 1)) => {
+      const p = layout.pos[id];
+      if (!p) return;
+      setAnimate(true);
+      setView({ k, x: box.w / 2 - (p.x + CARD_W / 2) * k, y: box.h / 2 - (p.y + CARD_H / 2) * k });
+    },
+    [box, layout, view.k]
+  );
+
+  useEffect(() => {
+    if (!fitted.current && box.w > 0) {
+      fitted.current = true;
+      fit();
+    }
+  }, [box, fit]);
+  useEffect(() => {
+    if (fitted.current) fit(); // re-fit when lanes change (mode toggle)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [mode]);
+
+  const zoomAt = useCallback((factor: number, cx: number, cy: number, anim: boolean) => {
+    setAnimate(anim);
+    setView((v) => {
+      const k = Math.min(Math.max(v.k * factor, 0.25), 2.4);
+      const f = k / v.k;
+      return { k, x: cx - (cx - v.x) * f, y: cy - (cy - v.y) * f };
+    });
+  }, []);
+
+  // wheel zoom around pointer (non-passive so the page doesn't scroll)
+  useEffect(() => {
+    const el = boxRef.current;
+    if (!el) return;
+    const onWheel = (e: WheelEvent) => {
+      e.preventDefault();
+      const r = el.getBoundingClientRect();
+      if (e.ctrlKey || Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
+        zoomAt(Math.exp(-e.deltaY * 0.0018), e.clientX - r.left, e.clientY - r.top, false);
+      } else {
+        setAnimate(false);
+        setView((v) => ({ ...v, x: v.x - e.deltaX }));
+      }
+    };
+    el.addEventListener("wheel", onWheel, { passive: false });
+    return () => el.removeEventListener("wheel", onWheel);
+  }, [zoomAt]);
+
+  const onPointerDown = (e: React.PointerEvent) => {
+    drag.current = { x: e.clientX, y: e.clientY, vx: view.x, vy: view.y, moved: false };
+  };
+  const onPointerMove = (e: React.PointerEvent) => {
+    const d = drag.current;
+    if (!d) return;
+    const dx = e.clientX - d.x;
+    const dy = e.clientY - d.y;
+    if (!d.moved && Math.hypot(dx, dy) < 4) return;
+    if (!d.moved) (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
+    d.moved = true;
+    setAnimate(false);
+    setView((v) => ({ ...v, x: d.vx + dx, y: d.vy + dy }));
+  };
+  const onPointerUp = () => {
+    setTimeout(() => (drag.current = null), 0);
+  };
+  const click = (id: string) => {
+    if (drag.current?.moved) return;
+    onSelect(id);
+    focusOn(id);
+  };
+
+  const zoomClass = view.k < 0.55 ? "z-far" : view.k < 0.95 ? "z-mid" : "z-near";
+  const focused = selectedId && selectedId !== original.id;
+  const o = layout.pos[original.id];
+
+  return (
+    <div className="cc">
+      <div
+        ref={boxRef}
+        className={`cc-box ${drag.current?.moved ? "grabbing" : ""}`}
+        onPointerDown={onPointerDown}
+        onPointerMove={onPointerMove}
+        onPointerUp={onPointerUp}
+        onPointerLeave={onPointerUp}
+      >
+        <div
+          className={`cc-world ${zoomClass} ${animate ? "anim" : ""}`}
+          style={{
+            width: layout.W,
+            height: layout.H,
+            transform: `translate(${view.x}px, ${view.y}px) scale(${view.k})`,
+          }}
+        >
+          {/* lanes */}
+          {layout.lanes.map((l, i) => (
+            <div key={`${mode}-${l.key}`} className="cc-lane" style={{ top: TOP + i * LANE_H, height: LANE_H }}>
+              <span className="cc-lane-label">{l.label}</span>
+            </div>
+          ))}
+
+          {/* currents: fine wave paths from your Short to each similar Short */}
+          <svg className="cc-paths" width={layout.W} height={layout.H} key={`paths-${mode}`}>
+            {videos.map((v) => {
+              const p = layout.pos[v.id];
+              const x1 = o.x + CARD_W;
+              const y1 = o.y + THUMB_H / 2;
+              const x2 = p.x;
+              const y2 = p.y + THUMB_H / 2;
+              const dx = Math.max((x2 - x1) * 0.5, 40);
+              return (
+                <path
+                  key={v.id}
+                  d={`M${x1},${y1} C${x1 + dx},${y1} ${x2 - dx},${y2} ${x2},${y2}`}
+                  className={`cc-path ${selectedId === v.id ? "on" : ""}`}
+                />
+              );
+            })}
+            <path
+              className="cc-reveal"
+              d={`M0,${layout.H / 2} ${Array.from({ length: Math.ceil(layout.W / 80) }, (_, i) => `Q${i * 80 + 40},${layout.H / 2 + (i % 2 ? 14 : -14)} ${i * 80 + 80},${layout.H / 2}`).join(" ")}`}
+            />
+          </svg>
+
+          {/* cards */}
+          {[original, ...videos].map((v, i) => {
+            const p = layout.pos[v.id];
+            return (
+              <div
+                key={v.id}
+                className="cc-pos"
+                style={{ transform: `translate(${p.x}px, ${p.y}px)`, width: CARD_W }}
+                onPointerDown={(e) => e.stopPropagation()}
+              >
+                <div className="cc-in" style={{ animationDelay: `${200 + i * 40}ms` }}>
+                  <ShortCard
+                    v={v}
+                    mode={mode}
+                    selected={selectedId === v.id}
+                    dim={!!focused && selectedId !== v.id && v.id !== original.id}
+                    isOrigin={v.id === original.id}
+                    onClick={() => click(v.id)}
+                  />
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        <div className="cc-axis" aria-hidden>
+          <span>← more similar</span>
+          <span>less similar →</span>
+        </div>
+      </div>
+
+      <div className="cc-toolbar" onPointerDown={(e) => e.stopPropagation()}>
+        <button onClick={() => zoomAt(1 / 1.25, box.w / 2, box.h / 2, true)} aria-label="Zoom out">−</button>
+        <span className="cc-pct">{Math.round(view.k * 100)}%</span>
+        <button onClick={() => zoomAt(1.25, box.w / 2, box.h / 2, true)} aria-label="Zoom in">+</button>
+        <span className="cc-sep" />
+        <button onClick={fit}>Fit</button>
+        <button onClick={() => { onSelect(original.id); focusOn(original.id, 1.1); }}>Reset</button>
+      </div>
+      <div className="cc-legend">
+        {mode === "reach"
+          ? "Lanes = views ÷ subscribers (rough, not a ranking signal). Glow = beat their usual reach."
+          : "Lanes = raw public views. Switch to “Remove creator size” to compare fairly."}{" "}
+        Drag to pan · scroll to zoom.
+      </div>
+    </div>
+  );
+}
