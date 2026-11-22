@@ -10,7 +10,7 @@ import VideoList, { SORTS, type Sort } from "@/components/VideoList";
 import Verdict from "@/components/Verdict";
 import HowItWorks from "@/components/HowItWorks";
 import ShareCard from "@/components/ShareCard";
-import { SourceChips, TwinCard } from "@/components/Sources";
+import { YouPanel } from "@/components/Sources";
 import type { AnalyzeResponse } from "@/lib/types";
 
 type Phase = "idle" | "loading" | "done";
@@ -69,10 +69,14 @@ export default function Home() {
   const all = data ? [data.original, ...data.similar] : [];
   const selected = all.find((v) => v.id === selectedId) ?? null;
 
-  // Esc closes the inspector.
+  // Esc closes the "See why" drawer first, then the inspector.
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setSelectedId("");
+      if (e.key !== "Escape") return;
+      setShowWhy((open) => {
+        if (!open) setSelectedId("");
+        return false;
+      });
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
@@ -193,7 +197,7 @@ export default function Home() {
 
           <div className={`fs-body ${selected ? "with-inspector" : ""}`}>
             <div className="fs-canvas">
-              <SourceChips sources={data.verdict.trend.sources} />
+              <YouPanel sources={data.verdict.trend.sources} twins={data.elsewhere} live={data.source !== "mock"} />
               {view === "waves" ? (
                 <CurrentCanvas
                   original={data.original}
@@ -230,10 +234,11 @@ export default function Home() {
             )}
           </div>
 
-          <TwinCard twins={data.elsewhere} />
-
           {showWhy && (
-            <div className="fs-why">
+            <div className="fs-why" role="dialog" aria-label="Why these results">
+              <button className="fs-why-close" onClick={() => setShowWhy(false)} aria-label="Close">
+                ×
+              </button>
               <Verdict verdict={data.verdict} original={data.original} videos={data.similar} />
             </div>
           )}

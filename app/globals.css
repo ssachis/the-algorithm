@@ -514,32 +514,62 @@ main.shell:has(.fs) { max-width: none; padding: 0; }
 .cc-card.glow { box-shadow: 0 0 0 2px rgba(255,255,255,.9), 0 0 0 3px rgba(77, 143, 214, .55), 0 0 34px rgba(77, 143, 214, .5); }
 .cc-card.glow.dim { filter: none; opacity: .8; }
 
-/* #33: source chips over the canvas, and "Meet your twin" card */
+/* #33: You.com panel floating top-right over the canvas (least-similar corner, never over your Short) */
 .fs-canvas { position: relative; }
-.src-chips {
-  position: absolute; left: 28px; bottom: 60px; z-index: 2;
-  display: flex; flex-wrap: wrap; align-items: center; gap: 6px; max-width: calc(100% - 56px);
-  pointer-events: none;
+.you-panel {
+  position: absolute; top: 24px; right: 32px; z-index: 6; width: 320px; max-width: calc(100% - 64px);
+  max-height: calc(100% - 120px); overflow-y: auto;
+  background: rgba(255, 255, 255, .86); backdrop-filter: blur(12px);
+  border: 1px solid rgba(229, 235, 241, .9); border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(32, 58, 86, .12); padding: 14px 16px 16px;
+  animation: you-in .6s var(--ease) both;
 }
-.src-label { font-size: 12px; color: var(--ink-2); margin-right: 2px; }
+@keyframes you-in { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: none; } }
+.you-hide {
+  position: absolute; top: 6px; right: 8px; border: 0; background: none; font-size: 18px; line-height: 1;
+  color: var(--ink-3); cursor: pointer; padding: 4px 6px;
+}
+.you-hide:hover { color: var(--ink); }
+.you-pill {
+  position: absolute; top: 24px; right: 32px; z-index: 6; font-size: 12px; color: var(--deep);
+  background: rgba(255, 255, 255, .86); backdrop-filter: blur(12px); border: 1px solid var(--line);
+  border-radius: 999px; padding: 6px 12px; cursor: pointer;
+}
+.you-pill:hover { border-color: var(--water); }
+.src-chips { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; padding-right: 18px; }
+.src-label { width: 100%; font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-2); margin-bottom: 2px; }
 .src-chip {
-  pointer-events: auto; font-size: 12px; color: var(--deep); text-decoration: none;
-  background: rgba(255,255,255,0.92); border: 1px solid var(--line); border-radius: 999px;
-  padding: 4px 10px; max-width: 220px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  font-size: 12px; color: var(--deep); text-decoration: none;
+  background: #fff; border: 1px solid var(--line); border-radius: 999px;
+  padding: 4px 10px; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
   transition: border-color .3s ease;
 }
 .src-chip:hover { border-color: var(--water); }
-.twin-card {
-  margin: 8px 20px 0; padding: 16px 20px; border: 1px solid var(--line); border-radius: 14px;
-  background: var(--bg);
-}
-.twin-title { margin: 0; font-size: 20px; font-weight: 500; color: var(--deep); }
-.twin-sub { margin: 4px 0 10px; font-size: 13px; color: var(--ink-2); }
-.twin-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.twin-card { margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--line); }
+.you-hide + .twin-card { margin-top: 0; padding-top: 0; border-top: 0; }
+.twin-title { margin: 0; font-size: 18px; font-weight: 500; color: var(--deep); }
+.twin-sub { margin: 2px 0 10px; font-size: 12px; color: var(--ink-2); }
+.twin-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.twin-list li { display: flex; align-items: baseline; gap: 8px; min-width: 0; }
 .twin-tag {
-  display: inline-block; font-size: 11px; color: var(--deep); background: var(--pale);
-  border-radius: 999px; padding: 2px 8px; margin-right: 8px; vertical-align: middle;
+  flex: none; font-size: 10px; letter-spacing: .04em; color: var(--deep); background: var(--pale);
+  border-radius: 999px; padding: 2px 8px;
 }
-.twin-link { color: var(--ink); text-decoration: none; font-size: 14px; }
+.twin-link { color: var(--ink); text-decoration: none; font-size: 13px; line-height: 1.35; }
 .twin-link:hover { color: var(--water); }
-.twin-snip { margin: 4px 0 0; font-size: 13px; color: var(--ink-2); }
+
+/* "See why" as a bottom sheet over the canvas (was rendered below the fold) */
+.fs-why {
+  position: fixed !important; left: 50%; bottom: 0; transform: translateX(-50%); z-index: 20;
+  width: min(920px, 100vw); max-height: 72vh; overflow-y: auto;
+  background: var(--bg); border: 1px solid var(--line); border-bottom: 0; border-radius: 18px 18px 0 0;
+  box-shadow: 0 -18px 50px rgba(32, 58, 86, .18); padding: 28px 32px 32px !important;
+  animation: why-up .45s var(--ease) both;
+}
+@keyframes why-up { from { transform: translate(-50%, 40px); opacity: 0; } to { transform: translate(-50%, 0); opacity: 1; } }
+.fs-why-close {
+  position: sticky; top: 0; float: right; margin: -14px -14px 0 0; border: 0; background: var(--bg);
+  font-size: 22px; line-height: 1; color: var(--ink-3); cursor: pointer; padding: 4px 8px; border-radius: 8px; z-index: 1;
+}
+.fs-why-close:hover { color: var(--ink); }
+@media (prefers-reduced-motion: reduce) { .you-panel, .fs-why { animation: none; } }
