@@ -1,0 +1,46 @@
+# Pitch script (2 minutes)
+
+> Owner: Khyati. Rehearse with Sachi twice before judging.
+> Demo Shorts: **[TBD: Short A link]** and **[TBD: Short B link]** (see the issue, #7). Keep the timestamps in brackets.
+
+## 1. Hook (0:00–0:20)
+Two friends post the same idea on the same week: a 5 AM morning routine, same trend, similar length.
+One gets **48K views**. The other gets **800**.
+Ask the room: *"Why?"*
+
+> Note: the 48K / 800 pair is the mock demo's illustrative numbers. If we use it on stage, say so. The live demo should use real Shorts.
+
+## 2. Paste a Short live (0:20–0:50)
+- Paste the first demo Short into Wave.
+- The ripple map appears. Your Short sits in the centre; similar Shorts ripple out. Closer = more similar.
+- Say: *"Every dot is a real Short on the same idea, sized by views."*
+
+## 3. Flip "Remove creator size" (0:50–1:15)
+- Click **Remove creator size**. Dots resize by **views ÷ subscribers**.
+- Say: *"Views alone measure the creator as much as the idea. Dividing by subscribers asks: did this beat its creator's usual reach?"*
+- Point at one outlier and read its label (e.g. "Outlier >3×").
+
+## 4. Verdict with You.com sources (1:15–1:35)
+- Scroll to **Why it's moving now · via You.com**. Read one sentence, then open one cited source.
+- Say: *"You.com gives us the live context: why this idea is moving this week, with sources you can click."*
+
+## 5. What we can't know (1:35–1:45)
+- Show the **Unknown** bucket.
+- Say: *"We can't see retention, impressions or how YouTube distributed these Shorts. We say so on the screen, not in a footnote."*
+
+## 6. One experiment and close (1:45–2:00)
+- Show **One next experiment**.
+- Close: *"The algorithm doesn't always get you. But now you can get it."*
+
+---
+
+## Likely judge questions
+
+**Q: Where does the data come from? Can you see retention or impressions?**
+A: Public metrics only, from the YouTube Data API v3: views, likes, subscribers (when public), duration and publish date. We cannot see retention, impressions or traffic sources, and the product says so. Results are cached, so a repeat demo uses no extra quota.
+
+**Q: Why only YouTube? Why not TikTok or Instagram?**
+A: The build uses YouTube's public data for Shorts. Other platforms would need their own data access, which we haven't evaluated yet. Expanding is a next step, not something we've tested.
+
+**Q: What's the business model?**
+A: Not decided. This is a hackathon prototype. The likely users are creators and small teams who want to know whether a result came from the idea or from their own reach. We have not validated pricing or demand.
