@@ -1084,3 +1084,8 @@ html, body { overflow-x: hidden; }
 .drop .btn { background: var(--ink); color: #fff; }
 .drop .btn:disabled { opacity: 1; background: #2a3445; color: rgba(255, 255, 255, .75); }
 .drop .btn:not(:disabled):hover { background: var(--water); }
+.drop .btn-icon { width: 46px; height: 46px; padding: 0; border-radius: 999px; display: grid; place-items: center; flex: 0 0 46px; }
+.drop .btn-icon svg { transition: transform .3s var(--ease); }
+.drop .btn-icon:not(:disabled):hover svg { transform: scale(1.12) rotate(-8deg); }
+.drop .btn-icon:disabled { background: #e8ecf2; color: #8a94a4; }
+.drop { padding: 5px 5px 5px 22px; }
