@@ -45,6 +45,7 @@ export function ShortCard({
   selected,
   dim,
   isOrigin,
+  compare,
   onClick,
 }: {
   v: Video;
@@ -52,14 +53,15 @@ export function ShortCard({
   selected: boolean;
   dim?: boolean;
   isOrigin?: boolean;
-  onClick: () => void;
+  compare?: boolean;
+  onClick: (e: React.MouseEvent) => void;
 }) {
   const lvl = perfLevel(v.outperformance);
   const breakout = mode === "reach" && (lvl === "outlier" || lvl === "strong");
   const title = v.title.replace(/#\w+/g, "").trim();
   return (
     <button
-      className={`cc-card ${selected ? "selected" : ""} ${dim ? "dim" : ""} ${breakout ? "glow" : ""} ${isOrigin ? "origin" : ""}`}
+      className={`cc-card ${selected ? "selected" : ""} ${dim ? "dim" : ""} ${breakout ? "glow" : ""} ${isOrigin ? "origin" : ""} ${compare ? "compare" : ""}`}
       onClick={onClick}
       aria-label={`${title} by ${v.channelTitle}`}
     >
@@ -102,6 +104,7 @@ export default function CurrentCanvas({
   const [animate, setAnimate] = useState(true);
   const drag = useRef<{ x: number; y: number; vx: number; vy: number; moved: boolean } | null>(null);
   const fitted = useRef(false);
+  const [compareId, setCompareId] = useState<string | null>(null);
 
   // ---- layout (world coordinates) ----
   const layout = useMemo(() => {
@@ -216,8 +219,12 @@ export default function CurrentCanvas({
   const onPointerUp = () => {
     setTimeout(() => (drag.current = null), 0);
   };
-  const click = (id: string) => {
+  const click = (id: string, e?: React.MouseEvent) => {
     if (drag.current?.moved) return;
+    if (e?.shiftKey && selectedId && id !== selectedId) {
+      setCompareId(id);
+      return;
+    }
     onSelect(id);
     focusOn(id);
   };
@@ -345,7 +352,8 @@ export default function CurrentCanvas({
                     selected={selectedId === v.id}
                     dim={!!focused && selectedId !== v.id && v.id !== original.id}
                     isOrigin={v.id === original.id}
-                    onClick={() => click(v.id)}
+                    compare={compareId === v.id}
+                    onClick={(e) => click(v.id, e)}
                   />
                 </div>
               </div>
@@ -384,8 +392,67 @@ export default function CurrentCanvas({
         {mode === "reach"
           ? "Lanes = views ÷ subscribers (rough, not a ranking signal). Glow = beat their usual reach."
           : "Lanes = raw public views. Switch to “Remove creator size” to compare fairly."}{" "}
-        Drag to pan · scroll to zoom.
+        Drag to pan · scroll to zoom. Shift-click a second Short to compare.
       </div>
+      {compareId && (
+        <CompareTray
+          a={[original, ...videos].find((v) => v.id === (selectedId || original.id)) ?? original}
+          b={[original, ...videos].find((v) => v.id === compareId)!}
+          onClose={() => setCompareId(null)}
+        />
+      )}
     </div>
+  );
+}
+
+/** Measured differences only. No interpretation: each row is a number we have, compared. */
+export function CompareTray({ a, b, onClose }: { a: Video; b: Video; onClose: () => void }) {
+  const views = b.views - a.views;
+  const days = Math.round((new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime()) / 86_400_000);
+  const dur = b.durationSec - a.durationSec;
+  const signed = (n: number, f: (x: number) => string) => `${n >= 0 ? "+" : "−"}${f(Math.abs(n))}`;
+  const opA = a.outperformance;
+  const opB = b.outperformance;
+
+  const rows: { k: string; a: string; b: string; diff: string }[] = [
+    { k: "Views", a: formatCount(a.views), b: formatCount(b.views), diff: signed(views, formatCount) },
+    {
+      k: "Views ÷ subscribers",
+      a: opA == null ? "hidden" : formatX(opA),
+      b: opB == null ? "hidden" : formatX(opB),
+      diff: opA == null || opB == null ? "not comparable (hidden)" : `${opB >= opA ? "+" : "−"}${Math.abs(opB - opA).toFixed(1)}×`,
+    },
+    { k: "Length", a: `${a.durationSec}s`, b: `${b.durationSec}s`, diff: `${dur >= 0 ? "+" : "−"}${Math.abs(dur)}s` },
+    { k: "Posted", a: new Date(a.publishedAt).toLocaleDateString("en-US", { month: "short", day: "numeric" }), b: new Date(b.publishedAt).toLocaleDateString("en-US", { month: "short", day: "numeric" }), diff: `${Math.abs(days)} days ${days >= 0 ? "later" : "earlier"}` },
+  ];
+
+  return (
+    <aside className="cc-tray" aria-label="Compare two Shorts">
+      <div className="cc-tray-head">
+        <span className="eyebrow">Compare · measured differences</span>
+        <button className="linkbtn" onClick={onClose}>Close</button>
+      </div>
+      <div className="cc-tray-names">
+        <span><b>A:</b> {a.channelTitle}</span>
+        <span><b>B:</b> {b.channelTitle}</span>
+      </div>
+      <table className="cc-tray-table">
+        <thead>
+          <tr><th />
+            <th>A</th><th>B</th><th>B − A</th>
+          </tr>
+        </thead>
+        <tbody>
+          {rows.map((r) => (
+            <tr key={r.k}>
+              <th scope="row">{r.k}</th>
+              <td>{r.a}</td>
+              <td>{r.b}</td>
+              <td>{r.diff}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </aside>
   );
 }
