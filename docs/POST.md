@@ -1,7 +1,7 @@
 # Demo post (LinkedIn / X)
 
 > Draft. Confirm handles before posting: replace each `[handle]` with the real account, and keep the `@` only for accounts you intend to notify.
-> Attach: `docs/screenshots/ripple-toggle-demo.mp4` (the screen recording of the toggle). Re-record at 20–30 seconds on the live demo before posting.
+> Attach: the Share PNG (`Share your wave`) and the new clip, re-recorded on the live demo at 20–30 seconds before posting. The Best Content award is $150: tag the sponsors below.
 
 ---
 
@@ -19,7 +19,7 @@ What it does:
 
 What it doesn't do: know YouTube's internal ranking, or see retention and impressions. It says so on the screen.
 
-Thanks to [You.com handle], [localhost:nyc handle] and [GenZtea handle] for the hackathon.
+Thanks to [You.com handle], [localhost:nyc handle] and [GenZtea handle] for the hackathon. Built for Best Content.
 
 Try it: [live link]
 

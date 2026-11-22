@@ -10,6 +10,7 @@ import VideoList, { SORTS, type Sort } from "@/components/VideoList";
 import Verdict from "@/components/Verdict";
 import HowItWorks from "@/components/HowItWorks";
 import ShareCard from "@/components/ShareCard";
+import { SourceChips, TwinCard } from "@/components/Sources";
 import type { AnalyzeResponse } from "@/lib/types";
 
 type Phase = "idle" | "loading" | "done";
@@ -192,6 +193,7 @@ export default function Home() {
 
           <div className={`fs-body ${selected ? "with-inspector" : ""}`}>
             <div className="fs-canvas">
+              <SourceChips sources={data.verdict.trend.sources} />
               {view === "waves" ? (
                 <CurrentCanvas
                   original={data.original}
@@ -227,6 +229,8 @@ export default function Home() {
               </aside>
             )}
           </div>
+
+          <TwinCard twins={data.elsewhere} />
 
           {showWhy && (
             <div className="fs-why">
