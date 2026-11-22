@@ -1119,3 +1119,12 @@ html, body { overflow-x: hidden; }
 .cc-path { display: none !important; }
 .cc-card.dim { opacity: 1 !important; filter: none !important; }
 .cc-card.selected { transform: translateY(-6px) scale(1.06); }
+
+/* lane waves: soft, solid, gently flowing through each lane */
+.cc-paths .cc-field {
+  display: inline !important; stroke: rgba(36, 87, 214, .22); stroke-width: 1.6; stroke-dasharray: none;
+  opacity: 1; animation: field-flow 12s linear infinite !important; transform-box: view-box;
+}
+.cc-paths .cc-field:nth-of-type(2n) { stroke: rgba(150, 165, 185, .35); animation-duration: 16s !important; animation-direction: reverse !important; }
+@keyframes field-flow { from { transform: translateX(0); } to { transform: translateX(-240px); } }
+@media (prefers-reduced-motion: reduce) { .cc-paths .cc-field { animation: none !important; } }
