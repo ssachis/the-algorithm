@@ -55,3 +55,34 @@ export function sharedTerms(a: Video, b: Video): { tags: string[]; words: string
   const words = Array.from(keywords(b.title)).filter((w) => ka.has(w));
   return { tags, words };
 }
+
+/** "Vs yours": a few factual differences between a similar Short and the creator's own. Observed only. */
+export function versusYours(original: Video, v: Video): string[] {
+  const out: string[] = [];
+
+  if (Math.abs(v.durationSec - original.durationSec) >= 3) {
+    out.push(`${v.durationSec}s long, yours is ${original.durationSec}s`);
+  }
+
+  const when = (iso: string) => {
+    const d = new Date(iso);
+    const day = d.toLocaleString("en-US", { timeZone: "America/New_York", weekday: "short" });
+    const h = Number(d.toLocaleString("en-US", { timeZone: "America/New_York", hour: "numeric", hour12: false })) % 24;
+    const part = h >= 5 && h < 12 ? "morning" : h >= 12 && h < 17 ? "afternoon" : h >= 17 && h < 22 ? "evening" : "night";
+    return `${day} ${part}`;
+  };
+  const theirs = when(v.publishedAt);
+  const yours = when(original.publishedAt);
+  if (theirs !== yours) out.push(`Posted ${theirs}, yours ${yours} (ET)`);
+
+  const mine = new Set(original.hashtags.length ? original.hashtags : extractHashtags(original.title));
+  const extra = (v.hashtags.length ? v.hashtags : extractHashtags(v.title)).filter((t) => !mine.has(t)).slice(0, 3);
+  if (extra.length) out.push(`Tags you didn't use: ${extra.join(" ")}`);
+
+  const rate = (x: Video) => (x.likes != null && x.views > 0 ? (x.likes / x.views) * 100 : null);
+  const r1 = rate(v);
+  const r2 = rate(original);
+  if (r1 != null && r2 != null) out.push(`${r1.toFixed(1)}% likes per view, yours ${r2.toFixed(1)}%`);
+
+  return out;
+}

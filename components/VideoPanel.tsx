@@ -1,6 +1,6 @@
 import type { Video } from "@/lib/types";
 import { formatCount, formatX, perfDefinition, perfLevel, perfUnit, PERF_LABEL } from "@/lib/score";
-import { sharedTerms } from "@/lib/insights";
+import { sharedTerms, versusYours } from "@/lib/insights";
 import ShortPlayer from "./ShortPlayer";
 
 function ago(iso: string) {
@@ -12,6 +12,7 @@ export default function VideoPanel({ video, original }: { video: Video; original
   const isOriginal = video.id === original.id;
   const lvl = perfLevel(video.outperformance);
   const why = isOriginal ? null : sharedTerms(original, video);
+  const vs = isOriginal ? [] : versusYours(original, video);
   const title = video.title.replace(/#\w+/g, "").trim();
 
   return (
@@ -53,6 +54,15 @@ export default function VideoPanel({ video, original }: { video: Video; original
           <b>Why it's here:</b> {Math.round(video.similarity * 100)}% similarity
           {why.tags.length > 0 && <> · shares {why.tags.join(" ")}</>}
           {why.words.length > 0 && <> · title words &ldquo;{why.words.slice(0, 4).join(", ")}&rdquo;</>}
+        </div>
+      )}
+
+      {vs.length > 0 && (
+        <div className="why">
+          <b>Vs yours</b>
+          {vs.map((line) => (
+            <div key={line}>{line}</div>
+          ))}
         </div>
       )}
 
