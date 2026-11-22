@@ -11,11 +11,23 @@ export default function VideoPanel({ video, original }: { video: Video; original
   const isOriginal = video.id === original.id;
   const lvl = perfLevel(video.outperformance);
   const why = isOriginal ? null : sharedTerms(original, video);
+  const title = video.title.replace(/#\w+/g, "").trim();
 
   return (
     <aside className="card card-pad panel rise d1" aria-live="polite">
       <span className="eyebrow">{isOriginal ? "Your Short" : "Similar Short"}</span>
-      <h3 className="serif">{video.title.replace(/#\w+/g, "").trim()}</h3>
+
+      {/* Real thumbnail when we have one; a quiet placeholder otherwise. */}
+      <div className="thumb-box">
+        {video.thumbnail ? (
+          // Plain img: thumbnails come from YouTube's CDN, not a Next image config.
+          <img src={video.thumbnail} alt={title} loading="lazy" />
+        ) : (
+          <span aria-hidden="true">No thumbnail</span>
+        )}
+      </div>
+
+      <h3 className="serif">{title}</h3>
       <div className="faint" style={{ fontSize: 13 }}>
         {video.channelTitle} · {ago(video.publishedAt)} · {video.durationSec}s
       </div>
@@ -26,7 +38,8 @@ export default function VideoPanel({ video, original }: { video: Video; original
 
       <div className="stats">
         <div className="stat hero-stat">
-          <div className="v">{formatX(video.outperformance)}</div>
+          {/* Hidden subscriber counts show as "hidden", never as a dash or a crash. */}
+          <div className="v">{video.outperformance == null ? "hidden" : formatX(video.outperformance)}</div>
           <div className="k">views ÷ subscribers</div>
         </div>
         <div className="stat">
