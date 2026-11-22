@@ -4,7 +4,6 @@ import DropInput from "@/components/DropInput";
 import { WaveLoader, WaveMotif } from "@/components/WaveMotif";
 import { type Mode } from "@/components/RippleMap";
 import CurrentCanvas, { ShortCard } from "@/components/CurrentCanvas";
-import ModeToggle from "@/components/ModeToggle";
 import VideoPanel from "@/components/VideoPanel";
 import VideoList, { SORTS, type Sort } from "@/components/VideoList";
 import Verdict from "@/components/Verdict";
@@ -223,10 +222,8 @@ export default function Home() {
                     </button>
                   ))}
                 </div>
-                {view !== "insights" && <span className="dock-sep" />}
-                {view === "insights" ? null : view !== "list" ? (
-                  <ModeToggle mode={mode} onChange={setMode} />
-                ) : (
+                {view === "list" && <span className="dock-sep" />}
+                {view === "list" && (
                   <div className="dock-seg">
                     {SORTS.map((s) => (
                       <button key={s.id} aria-pressed={sort === s.id} onClick={() => setSort(s.id)}>
