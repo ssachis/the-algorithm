@@ -15,23 +15,23 @@ const LABEL_W = 150;
 const ORIGIN_X = LABEL_W + 20;
 const FIRST_X = ORIGIN_X + CARD_W + 120;
 const SPREAD = 820;
-const GAP = 18;
+const GAP = 30;
 const TOP = 24;
 
 type Lane = { key: string; label: string; test: (v: Video) => boolean };
 
 const REACH_LANES: Lane[] = [
-  { key: "outlier", label: "Outlier · over 3×", test: (v) => perfLevel(v.outperformance) === "outlier" },
-  { key: "strong", label: "Strong · 1.5–3×", test: (v) => perfLevel(v.outperformance) === "strong" },
-  { key: "around", label: "Around usual", test: (v) => perfLevel(v.outperformance) === "around" },
-  { key: "below", label: "Below usual · under 0.5×", test: (v) => perfLevel(v.outperformance) === "below" },
-  { key: "na", label: "No baseline (subs hidden)", test: (v) => v.outperformance == null },
+  { key: "outlier", label: "Outlier", test: (v) => perfLevel(v.outperformance) === "outlier" },
+  { key: "strong", label: "Strong", test: (v) => perfLevel(v.outperformance) === "strong" },
+  { key: "around", label: "Usual", test: (v) => perfLevel(v.outperformance) === "around" },
+  { key: "below", label: "Below", test: (v) => perfLevel(v.outperformance) === "below" },
+  { key: "na", label: "Unknown", test: (v) => v.outperformance == null },
 ];
 const VIEW_LANES: Lane[] = [
-  { key: "1m", label: "1M+ views", test: (v) => v.views >= 1_000_000 },
-  { key: "100k", label: "100K–1M views", test: (v) => v.views >= 100_000 && v.views < 1_000_000 },
-  { key: "10k", label: "10K–100K views", test: (v) => v.views >= 10_000 && v.views < 100_000 },
-  { key: "lt10k", label: "Under 10K views", test: (v) => v.views < 10_000 },
+  { key: "1m", label: "1M+", test: (v) => v.views >= 1_000_000 },
+  { key: "100k", label: "100K+", test: (v) => v.views >= 100_000 && v.views < 1_000_000 },
+  { key: "10k", label: "10K+", test: (v) => v.views >= 10_000 && v.views < 100_000 },
+  { key: "lt10k", label: "Under 10K", test: (v) => v.views < 10_000 },
 ];
 
 const ago = (iso: string) => {
@@ -45,6 +45,8 @@ export function ShortCard({
   selected,
   dim,
   isOrigin,
+  compare,
+  minimal,
   onClick,
 }: {
   v: Video;
@@ -52,33 +54,38 @@ export function ShortCard({
   selected: boolean;
   dim?: boolean;
   isOrigin?: boolean;
-  onClick: () => void;
+  compare?: boolean;
+  minimal?: boolean;
+  onClick: (e: React.MouseEvent) => void;
 }) {
   const lvl = perfLevel(v.outperformance);
   const breakout = mode === "reach" && (lvl === "outlier" || lvl === "strong");
   const title = v.title.replace(/#\w+/g, "").trim();
   return (
     <button
-      className={`cc-card ${selected ? "selected" : ""} ${dim ? "dim" : ""} ${breakout ? "glow" : ""} ${isOrigin ? "origin" : ""}`}
+      className={`cc-card ${selected ? "selected" : ""} ${dim ? "dim" : ""} ${breakout ? "glow" : ""} ${isOrigin ? "origin" : ""} ${compare ? "compare" : ""}`}
       onClick={onClick}
       aria-label={`${title} by ${v.channelTitle}`}
     >
       <div className="cc-thumb">
         {v.thumbnail ? <img src={v.thumbnail} alt="" loading="lazy" draggable={false} /> : <div className="cc-ph" />}
-        {isOrigin && <span className="cc-badge you">your Short</span>}
-        {!isOrigin && mode === "reach" && v.outperformance != null && (
-          <span className={`cc-badge ${lvl}`}>{formatX(v.outperformance)}</span>
+        {isOrigin && <span className="cc-badge you">yours</span>}
+        {!isOrigin && breakout && <span className={`cc-badge ${lvl}`}>{formatX(v.outperformance)}</span>}
+        {minimal && (
+          <span className="cc-tip">
+            <b>{v.channelTitle}</b>
+            {formatCount(v.views)} views · {ago(v.publishedAt)}
+          </span>
         )}
-        {!isOrigin && mode === "views" && <span className="cc-badge plain">{formatCount(v.views)}</span>}
       </div>
-      <div className="cc-meta">
+      {!minimal && <div className="cc-meta">
         <div className="cc-creator">{v.channelTitle}</div>
         <div className="cc-title">{title}</div>
         <div className="cc-line">
           {formatCount(v.views)} · {ago(v.publishedAt)}
           {!isOrigin && ` · ${Math.round(v.similarity * 100)}%`}
         </div>
-      </div>
+      </div>}
     </button>
   );
 }
@@ -102,6 +109,7 @@ export default function CurrentCanvas({
   const [animate, setAnimate] = useState(true);
   const drag = useRef<{ x: number; y: number; vx: number; vy: number; moved: boolean } | null>(null);
   const fitted = useRef(false);
+  const [compareId, setCompareId] = useState<string | null>(null);
 
   // ---- layout (world coordinates) ----
   const layout = useMemo(() => {
@@ -146,10 +154,12 @@ export default function CurrentCanvas({
   }, []);
 
   const fit = useCallback(() => {
-    // Never below 45%: at smaller scales the cards become unreadable on a laptop.
-    const k = Math.max(0.45, Math.min(box.w / layout.W, box.h / layout.H) * 0.96);
+    // Fit the lanes to the height (cards stay readable); if the current is wider than the
+    // screen, start at the left (your Short) and let people drag sideways instead of shrinking.
+    const k = Math.min(Math.max((box.h / layout.H) * 0.96, 0.5), 1.1);
+    const w = layout.W * k;
     setAnimate(true);
-    setView({ k, x: (box.w - layout.W * k) / 2, y: (box.h - layout.H * k) / 2 });
+    setView({ k, x: w <= box.w ? (box.w - w) / 2 : 8, y: (box.h - layout.H * k) / 2 });
   }, [box, layout]);
 
   const focusOn = useCallback(
@@ -168,8 +178,29 @@ export default function CurrentCanvas({
       fit();
     }
   }, [box, fit]);
+  // Breakout spotlight: flipping to "Remove creator size" re-fits, then the biggest
+  // outlier pops out, glows and opens in the inspector.
+  const [spot, setSpot] = useState<string | null>(null);
   useEffect(() => {
-    if (fitted.current) fit(); // re-fit when lanes change (mode toggle)
+    if (!fitted.current) return;
+    fit(); // re-fit when lanes change (mode toggle)
+    if (mode !== "reach") {
+      setSpot(null);
+      return;
+    }
+    const top = videos
+      .filter((v) => v.outperformance != null)
+      .sort((a, b) => (b.outperformance ?? 0) - (a.outperformance ?? 0))[0];
+    if (!top) return;
+    const t1 = setTimeout(() => {
+      setSpot(top.id);
+      onSelect(top.id);
+    }, 900); // after the cards have slid into their new lanes
+    const t2 = setTimeout(() => setSpot(null), 4200);
+    return () => {
+      clearTimeout(t1);
+      clearTimeout(t2);
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mode]);
   // Re-fit when the canvas is resized (inspector opens or closes, window resizes).
@@ -222,10 +253,66 @@ export default function CurrentCanvas({
   const onPointerUp = () => {
     setTimeout(() => (drag.current = null), 0);
   };
-  const click = (id: string) => {
+  const click = (id: string, e?: React.MouseEvent) => {
     if (drag.current?.moved) return;
+    if (e?.shiftKey && selectedId && id !== selectedId) {
+      setCompareId(id);
+      return;
+    }
     onSelect(id);
     focusOn(id);
+  };
+
+  // Keyboard: arrows move the selection to the nearest card in that direction (same lane for
+  // left/right; the lane above/below for up/down). +/− zoom. Selection recenters, as with a click.
+  const neighbour = (fromId: string, dir: "left" | "right" | "up" | "down"): string | null => {
+    const from = layout.pos[fromId];
+    if (!from) return null;
+    let best: { id: string; score: number } | null = null;
+    for (const v of [original, ...videos]) {
+      if (v.id === fromId) continue;
+      const p = layout.pos[v.id];
+      const dx = p.x - from.x;
+      const dy = p.y - from.y;
+      const sameLane = Math.abs(dy) < 1;
+      let ok = false;
+      let score = 0;
+      if (dir === "left" || dir === "right") {
+        ok = sameLane && (dir === "right" ? dx > 0 : dx < 0);
+        score = Math.abs(dx);
+      } else {
+        const wantDown = dir === "down";
+        const laneGap = Math.round(dy / LANE_H);
+        ok = !sameLane && (wantDown ? laneGap > 0 : laneGap < 0);
+        // Adjacent lane first, then the horizontally closest card in it.
+        score = Math.abs(laneGap) * 100000 + Math.abs(dx);
+      }
+      if (ok && (!best || score < best.score)) best = { id: v.id, score };
+    }
+    return best?.id ?? null;
+  };
+
+  const onKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "+" || e.key === "=") {
+      e.preventDefault();
+      zoomAt(1.25, box.w / 2, box.h / 2, true);
+      return;
+    }
+    if (e.key === "-" || e.key === "_") {
+      e.preventDefault();
+      zoomAt(1 / 1.25, box.w / 2, box.h / 2, true);
+      return;
+    }
+    const dir = ({ ArrowLeft: "left", ArrowRight: "right", ArrowUp: "up", ArrowDown: "down" } as const)[
+      e.key as "ArrowLeft"
+    ];
+    if (!dir) return;
+    e.preventDefault();
+    const next = neighbour(selectedId || original.id, dir);
+    if (next) {
+      onSelect(next);
+      focusOn(next);
+    }
   };
 
   const zoomClass = view.k < 0.55 ? "z-far" : view.k < 0.95 ? "z-mid" : "z-near";
@@ -236,6 +323,10 @@ export default function CurrentCanvas({
     <div className="cc">
       <div
         ref={boxRef}
+        tabIndex={0}
+        role="application"
+        aria-label="Similar Shorts canvas. Arrow keys move between Shorts; plus and minus zoom."
+        onKeyDown={onKeyDown}
         className={`cc-box ${drag.current?.moved ? "grabbing" : ""}`}
         onPointerDown={onPointerDown}
         onPointerMove={onPointerMove}
@@ -252,9 +343,7 @@ export default function CurrentCanvas({
         >
           {/* lanes */}
           {layout.lanes.map((l, i) => (
-            <div key={`${mode}-${l.key}`} className="cc-lane" style={{ top: TOP + i * LANE_H, height: LANE_H }}>
-              <span className="cc-lane-label">{l.label}</span>
-            </div>
+            <div key={`${mode}-${l.key}`} className="cc-lane" style={{ top: TOP + i * LANE_H, height: LANE_H }} />
           ))}
 
           {/* currents: fine wave paths from your Short to each similar Short */}
@@ -286,18 +375,20 @@ export default function CurrentCanvas({
             return (
               <div
                 key={v.id}
-                className="cc-pos"
+                className={`cc-pos ${spot === v.id ? "on-top" : ""}`}
                 style={{ transform: `translate(${p.x}px, ${p.y}px)`, width: CARD_W }}
                 onPointerDown={(e) => e.stopPropagation()}
               >
-                <div className="cc-in" style={{ animationDelay: `${200 + i * 40}ms` }}>
+                <div className={`cc-in ${spot === v.id ? "cc-spot" : ""}`} style={{ animationDelay: `${200 + i * 40}ms` }}>
                   <ShortCard
                     v={v}
                     mode={mode}
                     selected={selectedId === v.id}
                     dim={!!focused && selectedId !== v.id && v.id !== original.id}
                     isOrigin={v.id === original.id}
-                    onClick={() => click(v.id)}
+                    compare={compareId === v.id}
+                    minimal
+                    onClick={(e) => click(v.id, e)}
                   />
                 </div>
               </div>
@@ -305,9 +396,21 @@ export default function CurrentCanvas({
           })}
         </div>
 
-        <div className="cc-axis" aria-hidden>
-          <span>← more similar</span>
-          <span>less similar →</span>
+        {/* Lane labels stay readable at every zoom: fixed size, pinned to the left, following the lane's height. */}
+        <div className="cc-labels" aria-hidden>
+          {layout.lanes.map((l, i) => (
+            <span
+              key={`${mode}-lbl-${l.key}`}
+              className="cc-lane-tag"
+              style={{ top: view.y + (TOP + i * LANE_H + LANE_H / 2) * view.k }}
+            >
+              {l.label}
+            </span>
+          ))}
+        </div>
+
+        <div className="cc-hint" aria-hidden>
+          {mode === "reach" ? "Higher = beat their usual views" : "Higher = more views"} · further right = less similar
         </div>
       </div>
 
@@ -316,15 +419,67 @@ export default function CurrentCanvas({
         <span className="cc-pct">{Math.round(view.k * 100)}%</span>
         <button onClick={() => zoomAt(1.25, box.w / 2, box.h / 2, true)} aria-label="Zoom in">+</button>
         <span className="cc-sep" />
-        <button onClick={fit}>Fit</button>
-        <button onClick={() => { onSelect(original.id); focusOn(original.id, 1.1); }}>Reset</button>
+        <button onClick={fit} aria-label="Fit to screen" title="Fit">⤢</button>
       </div>
-      <div className="cc-legend">
-        {mode === "reach"
-          ? "Lanes = views ÷ subscribers (rough, not a ranking signal). Glow = beat their usual reach."
-          : "Lanes = raw public views. Switch to “Remove creator size” to compare fairly."}{" "}
-        Drag to pan · scroll to zoom.
-      </div>
+      {compareId && (
+        <CompareTray
+          a={[original, ...videos].find((v) => v.id === (selectedId || original.id)) ?? original}
+          b={[original, ...videos].find((v) => v.id === compareId)!}
+          onClose={() => setCompareId(null)}
+        />
+      )}
     </div>
+  );
+}
+
+/** Measured differences only. No interpretation: each row is a number we have, compared. */
+export function CompareTray({ a, b, onClose }: { a: Video; b: Video; onClose: () => void }) {
+  const views = b.views - a.views;
+  const days = Math.round((new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime()) / 86_400_000);
+  const dur = b.durationSec - a.durationSec;
+  const signed = (n: number, f: (x: number) => string) => `${n >= 0 ? "+" : "−"}${f(Math.abs(n))}`;
+  const opA = a.outperformance;
+  const opB = b.outperformance;
+
+  const rows: { k: string; a: string; b: string; diff: string }[] = [
+    { k: "Views", a: formatCount(a.views), b: formatCount(b.views), diff: signed(views, formatCount) },
+    {
+      k: "vs. their usual",
+      a: opA == null ? "hidden" : formatX(opA),
+      b: opB == null ? "hidden" : formatX(opB),
+      diff: opA == null || opB == null ? "not comparable (hidden)" : `${opB >= opA ? "+" : "−"}${Math.abs(opB - opA).toFixed(1)}×`,
+    },
+    { k: "Length", a: `${a.durationSec}s`, b: `${b.durationSec}s`, diff: `${dur >= 0 ? "+" : "−"}${Math.abs(dur)}s` },
+    { k: "Posted", a: new Date(a.publishedAt).toLocaleDateString("en-US", { month: "short", day: "numeric" }), b: new Date(b.publishedAt).toLocaleDateString("en-US", { month: "short", day: "numeric" }), diff: `${Math.abs(days)} days ${days >= 0 ? "later" : "earlier"}` },
+  ];
+
+  return (
+    <aside className="cc-tray" aria-label="Compare two Shorts">
+      <div className="cc-tray-head">
+        <span className="eyebrow">Compare · measured differences</span>
+        <button className="linkbtn" onClick={onClose}>Close</button>
+      </div>
+      <div className="cc-tray-names">
+        <span><b>A:</b> {a.channelTitle}</span>
+        <span><b>B:</b> {b.channelTitle}</span>
+      </div>
+      <table className="cc-tray-table">
+        <thead>
+          <tr><th />
+            <th>A</th><th>B</th><th>B − A</th>
+          </tr>
+        </thead>
+        <tbody>
+          {rows.map((r) => (
+            <tr key={r.k}>
+              <th scope="row">{r.k}</th>
+              <td>{r.a}</td>
+              <td>{r.b}</td>
+              <td>{r.diff}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </aside>
   );
 }

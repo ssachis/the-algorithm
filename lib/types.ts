@@ -17,7 +17,9 @@ export type Video = {
   hashtags: string[];
   // Computed by lib/score.ts
   similarity: number; // 0..1, 1 = the original video
-  outperformance: number | null; // views / max(subscribers, 100)
+  outperformance: number | null; // views / creator's median recent Short (fallback: views / max(subs, 100))
+  baselineMedian?: number | null; // median views of the creator's recent Shorts
+  baselineN?: number; // how many recent Shorts that median is based on
   viewsPerDay: number;
 };
 
@@ -38,21 +40,16 @@ export type Verdict = {
   nextExperiment: string; // one concrete thing to try
 };
 
-// Optional (added for #33): the same idea found on other platforms, via You.com.
-// Missing or empty means the card is hidden. Readers must not assume it is present.
-export type Twin = {
-  platform: string; // "TikTok" | "Instagram" | "Reddit" | "News" | "Web"
-  title: string;
-  url: string;
-  snippet?: string;
-};
-
 export type AnalyzeResponse = {
   query: string; // the trend/idea we searched for
   original: Video;
   similar: Video[];
   verdict: Verdict;
-  elsewhere?: Twin[]; // optional, up to 4 (see Twin)
   generatedAt: string;
   source: "live" | "cache" | "mock";
+  // Where the same idea shows up outside YouTube right now (You.com web search).
+  elsewhere?: { platform: string; title: string; url: string; snippet?: string }[];
 };
+
+// One item of AnalyzeResponse.elsewhere (UI helper alias; the contract above is unchanged).
+export type Twin = NonNullable<AnalyzeResponse["elsewhere"]>[number];

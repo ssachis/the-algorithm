@@ -95,4 +95,14 @@ export const PERF_LABEL: Record<PerfLevel, string> = {
   na: "No baseline",
 };
 export const PERF_DEFINITION =
-  "Relative performance = views ÷ subscribers (small channels floored at 100). A rough comparison, not a ranking signal.";
+  "Relative performance = views ÷ the creator's median views on their recent Shorts (or ÷ subscribers when that isn't available). A rough comparison, not a ranking signal.";
+
+/** Short label for what the relative number is measured against. */
+export function perfUnit(v: { baselineMedian?: number | null }): string {
+  return v.baselineMedian ? "vs. their usual" : "views ÷ subscribers";
+}
+export function perfDefinition(v: { baselineMedian?: number | null; baselineN?: number }): string {
+  return v.baselineMedian
+    ? `Views ÷ this creator's median (${formatCount(v.baselineMedian)}) across their last ${v.baselineN} Shorts. A rough comparison, not a ranking signal.`
+    : "Views ÷ subscribers (we couldn't get enough recent Shorts for this creator). A rough comparison, not a ranking signal.";
+}

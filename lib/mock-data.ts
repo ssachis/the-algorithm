@@ -91,24 +91,11 @@ export const mockResponse: AnalyzeResponse = {
     nextExperiment:
       "Re-cut the same footage as a 7-day experiment with a verdict in the first two seconds, and post it within the next week while the counter-take wave is still rising.",
   },
-  elsewhere: [
-    {
-      platform: "Reddit",
-      title: "Demo: a thread arguing the 7-day format is overdone",
-      url: "https://example.com/demo/reddit-thread",
-      snippet: "Demo data. Replace with a live You.com result.",
-    },
-    {
-      platform: "TikTok",
-      title: "Demo: the same hook, filmed on a phone in one take",
-      url: "https://example.com/demo/tiktok-take",
-    },
-    {
-      platform: "News",
-      title: "Demo: a trade piece on the verdict-first format",
-      url: "https://example.com/demo/news-piece",
-    },
-  ],
   generatedAt: new Date(NOW).toISOString(),
   source: "mock",
+  elsewhere: [
+    { platform: "TikTok", title: "Example: #5amclub on TikTok (illustrative)", url: "https://www.tiktok.com/tag/5amclub" },
+    { platform: "Reddit", title: "Example: r/productivity 5AM thread (illustrative)", url: "https://www.reddit.com/r/productivity/" },
+    { platform: "Instagram", title: "Example: #morningroutine reels (illustrative)", url: "https://www.instagram.com/explore/tags/morningroutine/" },
+  ],
 };

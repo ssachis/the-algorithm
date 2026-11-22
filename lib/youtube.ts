@@ -109,18 +109,39 @@ export async function searchShorts(query: string, max = 25): Promise<string[]> {
   return (value.items ?? []).map((it: any) => it.id?.videoId).filter(Boolean);
 }
 
-/** channels.list in batches of 50. Hidden subscriber counts become null. */
-export async function getSubscribers(channelIds: string[]): Promise<Record<string, number | null>> {
+/** channels.list in batches of 50. Hidden subscriber counts become null. Also returns uploads playlists. */
+export async function getChannels(
+  channelIds: string[]
+): Promise<{ subs: Record<string, number | null>; uploads: Record<string, string> }> {
   const ids = Array.from(new Set(channelIds.filter(Boolean)));
-  const out: Record<string, number | null> = {};
+  const subs: Record<string, number | null> = {};
+  const uploads: Record<string, string> = {};
   for (let i = 0; i < ids.length; i += 50) {
     const batch = ids.slice(i, i + 50);
-    const { value } = await cached(`channels:${batch.join(",")}`, () =>
-      call("channels", { part: "statistics", id: batch.join(","), maxResults: "50" }, 1)
+    const { value } = await cached(`channels2:${batch.join(",")}`, () =>
+      call("channels", { part: "statistics,contentDetails", id: batch.join(","), maxResults: "50" }, 1)
     );
     for (const it of value.items ?? []) {
-      out[it.id] = it.statistics?.hiddenSubscriberCount ? null : num(it.statistics?.subscriberCount);
+      subs[it.id] = it.statistics?.hiddenSubscriberCount ? null : num(it.statistics?.subscriberCount);
+      const up = it.contentDetails?.relatedPlaylists?.uploads;
+      if (up) uploads[it.id] = up;
     }
   }
-  return out;
+  return { subs, uploads };
+}
+
+export async function getSubscribers(channelIds: string[]): Promise<Record<string, number | null>> {
+  return (await getChannels(channelIds)).subs;
+}
+
+/** Most recent upload ids from a channel's uploads playlist (1 quota unit). */
+export async function getRecentUploadIds(playlistId: string, max = 15): Promise<string[]> {
+  try {
+    const { value } = await cached(`uploads:${playlistId}:${max}`, () =>
+      call("playlistItems", { part: "contentDetails", playlistId, maxResults: String(max) }, 1)
+    );
+    return (value.items ?? []).map((it: any) => it.contentDetails?.videoId).filter(Boolean);
+  } catch {
+    return []; // a missing/private uploads playlist just means no baseline
+  }
 }

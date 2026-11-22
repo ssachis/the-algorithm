@@ -447,6 +447,72 @@ main.shell:has(.fs) { max-width: none; padding: 0; }
   .fs-query { display: none; }
 }
 .cc-path:not(.on) { opacity: .25 !important; animation: none; }
+/* ---------- Wave kit: canvas polish (components/CurrentCanvas.tsx, #25 item 3) ---------- */
+.cc-box:focus-visible { outline: 2px solid var(--water); outline-offset: 2px; }
+.cc-labels { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+.cc-lane-tag {
+  position: absolute; left: 12px; transform: translateY(-50%);
+  font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-2);
+  background: rgba(250, 251, 252, .9); padding: 3px 8px; border-radius: 999px;
+  white-space: nowrap; box-shadow: 0 1px 2px rgba(32, 58, 86, .06);
+}
+
+/* ---------- Wave kit: compare tray (components/CurrentCanvas.tsx, #25 item 4) ---------- */
+.cc-card.compare { outline: 2px dashed var(--water); outline-offset: 3px; }
+.cc-tray { margin: 14px 12px 0; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 16px 18px; }
+.cc-tray-head { display: flex; justify-content: space-between; align-items: center; }
+.cc-tray-names { display: flex; gap: 24px; margin: 8px 0 10px; font-size: 13px; color: var(--ink-2); flex-wrap: wrap; }
+.cc-tray-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.cc-tray-table th, .cc-tray-table td { text-align: left; padding: 6px 8px; border-top: 1px solid var(--line); font-weight: 400; }
+.cc-tray-table thead th { font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-3); border-top: 0; }
+.cc-tray-table tbody th { color: var(--ink-2); }
+@media (max-width: 560px) { .cc-tray-table th, .cc-tray-table td { padding: 5px 4px; font-size: 12px; } }
+
+/* breakout spotlight (mode → "Remove creator size") */
+.cc-pos.on-top { z-index: 5; }
+.cc-spot { animation: cc-pop 3.2s var(--ease) both !important; }
+.cc-spot .cc-card { border-color: var(--water); }
+@keyframes cc-pop {
+  0% { transform: none; filter: none; }
+  18% { transform: translateY(-14px) scale(1.22); filter: drop-shadow(0 18px 30px rgba(77, 143, 214, .55)); }
+  70% { transform: translateY(-10px) scale(1.16); filter: drop-shadow(0 14px 26px rgba(77, 143, 214, .45)); }
+  100% { transform: none; filter: none; }
+}
+@media (prefers-reduced-motion: reduce) { .cc-spot { animation: none !important; } }
+
+/* ---------- calm pass: fewer lines, fewer words, more air ---------- */
+.cc-box { background: radial-gradient(120% 90% at 0% 50%, #f6f9fc 0%, #eef4fa 60%, #e9f1f9 100%); border: 0; }
+.cc-lane, .cc-lane:first-child { border-top: 0; }
+.cc-lane-tag { background: transparent; box-shadow: none; color: var(--ink-3); font-size: 10px; letter-spacing: .14em; padding: 0; }
+.cc-path { opacity: 0 !important; animation: none !important; transition: opacity .4s var(--ease); }
+.cc-path.on { opacity: .9 !important; stroke-width: 1.6; }
+.cc-card { border: 0; border-radius: 14px; background: transparent; box-shadow: 0 1px 2px rgba(32, 58, 86, .06), 0 6px 18px rgba(32, 58, 86, .08); }
+.cc-card:hover { transform: translateY(-4px) scale(1.03); box-shadow: 0 14px 32px rgba(32, 58, 86, .18); }
+.cc-thumb { border-radius: 14px; overflow: hidden; }
+.cc-card.dim { opacity: .55; filter: saturate(.6); }
+.cc-card.origin { box-shadow: 0 0 0 2px #fff, 0 0 0 4px var(--deep), 0 10px 26px rgba(32, 58, 86, .2); }
+.cc-card.selected { box-shadow: 0 0 0 2px #fff, 0 0 0 4px var(--water), 0 14px 32px rgba(32, 58, 86, .2); }
+.cc-badge { left: auto; right: 6px; top: 6px; backdrop-filter: blur(6px); }
+.cc-badge.you { left: 6px; right: auto; }
+.cc-tip {
+  position: absolute; left: 0; right: 0; bottom: 0; padding: 22px 8px 8px; font-size: 10px; line-height: 1.35; color: #fff;
+  background: linear-gradient(transparent, rgba(13, 27, 42, .78)); opacity: 0; transform: translateY(6px);
+  transition: opacity .25s var(--ease), transform .25s var(--ease); pointer-events: none;
+}
+.cc-tip b { display: block; font-weight: 600; font-size: 11px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.cc-card:hover .cc-tip, .cc-card.selected .cc-tip { opacity: 1; transform: none; }
+.cc-hint {
+  position: absolute; left: 50%; bottom: 14px; transform: translateX(-50%); font-size: 11px; color: var(--ink-3);
+  background: rgba(255, 255, 255, .7); backdrop-filter: blur(8px); padding: 5px 12px; border-radius: 999px;
+  pointer-events: none; animation: cc-hint 6s var(--ease) 1.2s both;
+}
+@keyframes cc-hint { 0% { opacity: 0; } 12% { opacity: 1; } 80% { opacity: 1; } 100% { opacity: 0; } }
+.cc-toolbar { top: auto; bottom: 14px; right: 18px; background: rgba(255, 255, 255, .72); backdrop-filter: blur(12px); box-shadow: 0 6px 20px rgba(32, 58, 86, .1); border-color: rgba(229, 235, 241, .8); }
+.cc-toolbar button { font-size: 15px; }
+.cc-pct { font-size: 11px; min-width: 36px; }
+.cc-path:not(.on) { opacity: 0 !important; }
+.cc-card.glow { box-shadow: 0 0 0 2px rgba(255,255,255,.9), 0 0 0 3px rgba(77, 143, 214, .55), 0 0 34px rgba(77, 143, 214, .5); }
+.cc-card.glow.dim { filter: none; opacity: .8; }
 
 /* #33: source chips over the canvas, and "Meet your twin" card */
 .fs-canvas { position: relative; }

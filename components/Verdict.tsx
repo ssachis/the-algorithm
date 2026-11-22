@@ -86,7 +86,7 @@ export default function Verdict({
           <span className="eyebrow">Timing</span>
           <h4 className="serif">When each version landed</h4>
           <Timeline original={original} videos={videos} />
-          <div className="definition">Dot size = views ÷ subscribers. Outlined dot = your Short.</div>
+          <div className="definition">Dot size = views vs. the creator's usual. Outlined dot = your Short.</div>
         </div>
       </div>
 

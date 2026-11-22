@@ -67,6 +67,34 @@ export async function buildVerdict(input: VerdictInput): Promise<Verdict> {
   };
 }
 
+/** Where the same idea is showing up outside YouTube right now (TikTok, Instagram, Reddit, news). */
+export async function elsewhere(
+  query: string
+): Promise<{ platform: string; title: string; url: string; snippet?: string }[]> {
+  const key = apiKey();
+  if (!key) return [];
+  const json = await post(SEARCH_URL, key, {
+    query: `${query} tiktok OR instagram reels OR reddit trend`,
+    count: 10,
+  });
+  const platformOf = (u: string) => {
+    const h = new URL(u).hostname.replace(/^www\./, "");
+    if (h.includes("tiktok")) return "TikTok";
+    if (h.includes("instagram")) return "Instagram";
+    if (h.includes("reddit")) return "Reddit";
+    if (h.includes("x.com") || h.includes("twitter")) return "X";
+    if (h.includes("pinterest")) return "Pinterest";
+    return "Web";
+  };
+  const seen = new Set<string>();
+  return asSources([...pickHits(json), ...pickHits(json?.results?.news ? { results: json.results.news } : null)])
+    .filter((s) => !/youtube\.com|youtu\.be/.test(s.url))
+    .map((s) => ({ ...s, platform: platformOf(s.url) }))
+    .filter((s) => (seen.has(s.url) ? false : (seen.add(s.url), true)))
+    .sort((a, b) => (a.platform === "Web" ? 1 : 0) - (b.platform === "Web" ? 1 : 0))
+    .slice(0, 6);
+}
+
 // ---------- numbers (shared by prompt and fallback) ----------
 
 type Stats = {
@@ -158,7 +186,7 @@ function verdictPrompt(input: VerdictInput, s: Stats): string {
   };
   return [
     "You are writing a short creator briefing about one YouTube Shorts idea.",
-    "Use ONLY the numbers in the data below. Outperformance = views divided by the creator's subscriber count (floored at 100).",
+    "Use ONLY the numbers in the data below. Outperformance = views divided by the creator's median views on their recent Shorts (or by subscribers when unavailable).",
     "Separate observed facts from possible explanations. Never invent retention, impressions or audience data.",
     "Never claim to know YouTube's internal algorithm. If something cannot be known from public data, say so under unknowns.",
     "Return ONLY a JSON object with these keys:",
