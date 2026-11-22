@@ -343,7 +343,7 @@ export default function CurrentCanvas({
       return;
     }
     onSelect(id);
-    focusOn(id);
+    focusOn(id, Math.min(Math.max(view.k * 1.6, 0.95), 1.35)); // glide in on the chosen Short
   };
 
   // Keyboard: arrows move the selection to the nearest card in that direction (same lane for
@@ -393,7 +393,7 @@ export default function CurrentCanvas({
     const next = neighbour(selectedId || original.id, dir);
     if (next) {
       onSelect(next);
-      focusOn(next);
+      focusOn(next, Math.min(Math.max(view.k, 0.95), 1.35));
     }
   };
 

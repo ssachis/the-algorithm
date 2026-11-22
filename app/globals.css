@@ -1094,3 +1094,4 @@ html, body { overflow-x: hidden; }
 .cc-world.tour.anim { transition: transform 1.9s cubic-bezier(.65, 0, .25, 1); }
 .cc-toolbar button.on { color: var(--water); }
 @media (prefers-reduced-motion: reduce) { .cc-world.tour.anim { transition: none; } }
+.cc-world.anim { transition: transform .9s cubic-bezier(.65, 0, .25, 1); }
