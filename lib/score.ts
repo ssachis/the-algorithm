@@ -1,0 +1,71 @@
+import type { Video } from "./types";
+
+/** Floor small channels at 100 subs so tiny accounts don't explode the scale. */
+export const SUB_FLOOR = 100;
+
+export function outperformance(views: number, subscribers: number | null): number | null {
+  if (subscribers == null) return null;
+  return views / Math.max(subscribers, SUB_FLOOR);
+}
+
+export function viewsPerDay(views: number, publishedAt: string, now = Date.now()): number {
+  const days = Math.max((now - new Date(publishedAt).getTime()) / 86_400_000, 1);
+  return views / days;
+}
+
+const STOP = new Set(
+  "the a an and or of to in on for with my your i me is are this that it at by from how what why shorts short".split(" ")
+);
+
+export function keywords(text: string): Set<string> {
+  return new Set(
+    text
+      .toLowerCase()
+      .replace(/#\w+/g, " ")
+      .replace(/[^a-z0-9\s]/g, " ")
+      .split(/\s+/)
+      .filter((w) => w.length > 2 && !STOP.has(w))
+  );
+}
+
+export function extractHashtags(text: string): string[] {
+  return Array.from(new Set((text.match(/#\w+/g) ?? []).map((h) => h.toLowerCase())));
+}
+
+function jaccard(a: Set<string>, b: Set<string>): number {
+  if (!a.size && !b.size) return 0;
+  let inter = 0;
+  a.forEach((x) => b.has(x) && inter++);
+  return inter / (a.size + b.size - inter);
+}
+
+/** 0.5 title keywords + 0.3 hashtags + 0.2 length closeness. */
+export function similarity(
+  a: Pick<Video, "title" | "hashtags" | "durationSec">,
+  b: Pick<Video, "title" | "hashtags" | "durationSec">
+): number {
+  const k = jaccard(keywords(a.title), keywords(b.title));
+  const h = jaccard(new Set(a.hashtags), new Set(b.hashtags));
+  const d = 1 - Math.min(Math.abs(a.durationSec - b.durationSec) / 60, 1);
+  return Math.round((0.5 * k + 0.3 * h + 0.2 * d) * 1000) / 1000;
+}
+
+/** ISO 8601 duration (PT1M5S) → seconds. */
+export function parseDuration(iso: string): number {
+  const m = iso.match(/PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/);
+  if (!m) return 0;
+  return Number(m[1] ?? 0) * 3600 + Number(m[2] ?? 0) * 60 + Number(m[3] ?? 0);
+}
+
+export function formatCount(n: number | null): string {
+  if (n == null) return "hidden";
+  if (n >= 1_000_000) return (n / 1_000_000).toFixed(n >= 10_000_000 ? 0 : 1).replace(/\.0$/, "") + "M";
+  if (n >= 1_000) return (n / 1_000).toFixed(n >= 10_000 ? 0 : 1).replace(/\.0$/, "") + "K";
+  return String(Math.round(n));
+}
+
+export function formatX(x: number | null): string {
+  if (x == null) return "—";
+  if (x >= 10) return `${Math.round(x)}×`;
+  return `${x.toFixed(1)}×`;
+}
