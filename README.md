@@ -1,8 +1,8 @@
-# the algorithm.
+# wave.
 
 **Same idea. Different outcomes.**
 
-Paste a YouTube Short and The Algorithm finds other Shorts on the same trend or idea. They ripple out from
+Paste a YouTube Short and Wave finds other Shorts on the same trend or idea. They ripple out from
 yours on a map, sized by views. One toggle removes creator size, so you see which videos actually beat
 their creator's usual reach. You.com explains, with sources, why the trend is moving right now, and you
 leave with one concrete experiment for your next post.
