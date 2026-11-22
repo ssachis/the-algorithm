@@ -236,3 +236,17 @@ button { font: inherit; cursor: pointer; }
 .share { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
 .share-btn { background: var(--deep); }
 .share-btn:hover { background: var(--water); }
+
+/* how it works strip (components/HowItWorks.tsx) */
+.how { margin: 24px auto 0; max-width: 960px; }
+.how-steps { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 40px; }
+.how-step { display: flex; flex-direction: column; align-items: flex-start; }
+.how-num {
+  width: 32px; height: 32px; border-radius: 50%; border: 1px solid var(--line);
+  display: grid; place-items: center; font-size: 13px; color: var(--water); margin-bottom: 16px;
+}
+.how-title { font-size: 20px; line-height: 1.2; margin: 0 0 8px; color: var(--ink); }
+.how-body { font-size: 14px; line-height: 1.6; color: var(--ink-2); margin: 0; }
+@media (max-width: 700px) {
+  .how-steps { grid-template-columns: 1fr; gap: 28px; }
+}
