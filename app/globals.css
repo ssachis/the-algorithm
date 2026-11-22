@@ -1,20 +1,19 @@
-/* wave. — quiet, editorial, still water.
-   Near-white, soft mist, water blue, deep blue. Accent only for selection or meaningful performance. */
-
+/* Wave design kit ("VAVE minimal wave") — palette tokens.
+   Blue is a signal, not a fill. Sea glass is for sparing accents. */
 :root {
-  --bg: #fbfcfd;
+  --bg: #fafbfc;            /* Paper */
   --surface: #ffffff;
-  --ink: #0d1b2a;
-  --ink-2: #4a5868;
+  --ink: #203a56;           /* Deep water: main text */
+  --ink-2: #718096;         /* Slate */
   --ink-3: #8a96a3;
-  --line: #e6ebf0;
-  --mist: #eef3f8;
-  --pale: #d5dde6;
-  --sage: #b7cdea;
-  --water: #3b7dd8;
-  --deep: #0b3d91;
+  --line: #e5ebf1;          /* Hairline */
+  --mist: #eff5fa;          /* Mist */
+  --pale: #dceaf6;          /* Foam */
+  --sage: #a8c9c0;          /* Sea glass (sparingly) */
+  --water: #4d8fd6;         /* Current */
+  --deep: #203a56;          /* Deep water */
   --radius: 18px;
-  --shadow: 0 1px 2px rgba(31, 42, 36, 0.04), 0 8px 32px rgba(31, 42, 36, 0.05);
+  --shadow: 0 1px 2px rgba(32, 58, 86, 0.04), 0 8px 32px rgba(32, 58, 86, 0.05);
   --ease: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
