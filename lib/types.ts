@@ -57,6 +57,4 @@ export type AnalyzeResponse = {
   elsewhere?: Twin[]; // optional, up to 4 (see Twin)
   generatedAt: string;
   source: "live" | "cache" | "mock";
-  // Where the same idea shows up outside YouTube right now (You.com web search).
-  elsewhere?: { platform: string; title: string; url: string; snippet?: string }[];
 };
