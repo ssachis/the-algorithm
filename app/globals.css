@@ -286,3 +286,32 @@ button { font: inherit; cursor: pointer; }
 .share { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
 .share-btn { background: var(--deep); }
 .share-btn:hover { background: var(--water); }
+
+/* ---------- v3: portrait Short cards, heat glow, inline player ---------- */
+.card-scale { transition: transform .8s var(--ease); }
+.card-frame { stroke: #fff; stroke-width: 2.5; transition: stroke .25s var(--ease), stroke-width .25s; }
+.node:hover .card-frame { stroke: var(--water); }
+.card-frame.selected { stroke: var(--deep); stroke-width: 3.5; }
+.card-frame.origin-frame { stroke: var(--water); stroke-width: 3.5; }
+.card-frame.origin-frame.selected { stroke: var(--deep); }
+.origin-halo { fill: rgba(59, 125, 216, 0.07); }
+.heat-layer { transition: opacity .9s var(--ease); pointer-events: none; }
+.perf-dot { transition: fill .8s var(--ease); pointer-events: none; }
+
+.player {
+  position: relative; width: 100%; max-width: 240px; aspect-ratio: 9 / 16; margin: 0 auto 18px;
+  border-radius: 18px; overflow: hidden; background: #0d1b2a; box-shadow: 0 10px 30px rgba(13, 27, 42, .18);
+}
+.player iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+.player .poster { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.player .play {
+  position: absolute; inset: 0; display: grid; place-items: center; background: transparent; border: 0; color: #fff;
+}
+.player .play span {
+  width: 62px; height: 62px; border-radius: 999px; background: rgba(255,255,255,.22); backdrop-filter: blur(8px);
+  display: grid; place-items: center; font-size: 22px; transition: transform .25s var(--ease), background .25s;
+}
+.player .play:hover span { transform: scale(1.08); background: rgba(255,255,255,.32); }
+.player .ph { position: absolute; inset: 0; display: grid; place-items: center; color: var(--ink-3); font-size: 12px; background: linear-gradient(160deg, var(--mist), var(--pale)); }
+@media (min-width: 881px) { .panel { position: sticky; top: 20px; align-self: start; } }
+.grid { align-items: start; }

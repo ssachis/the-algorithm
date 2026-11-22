@@ -1,6 +1,7 @@
 import type { Video } from "@/lib/types";
 import { formatCount, formatX, perfLevel, PERF_DEFINITION, PERF_LABEL } from "@/lib/score";
 import { sharedTerms } from "@/lib/insights";
+import ShortPlayer from "./ShortPlayer";
 
 function ago(iso: string) {
   const d = Math.round((Date.now() - new Date(iso).getTime()) / 86_400_000);
@@ -17,15 +18,7 @@ export default function VideoPanel({ video, original }: { video: Video; original
     <aside className="card card-pad panel rise d1" aria-live="polite">
       <span className="eyebrow">{isOriginal ? "Your Short" : "Similar Short"}</span>
 
-      {/* Real thumbnail when we have one; a quiet placeholder otherwise. */}
-      <div className="thumb-box">
-        {video.thumbnail ? (
-          // Plain img: thumbnails come from YouTube's CDN, not a Next image config.
-          <img src={video.thumbnail} alt={title} loading="lazy" />
-        ) : (
-          <span aria-hidden="true">No thumbnail</span>
-        )}
-      </div>
+      <ShortPlayer key={video.id} video={video} title={title} />
 
       <h3 className="serif">{title}</h3>
       <div className="faint" style={{ fontSize: 13 }}>
