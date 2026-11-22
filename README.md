@@ -31,3 +31,5 @@ npm run dev
 - Khyati — pitch, demo and frontend components
 
 _Pitch, screenshots and demo video coming soon._
+
+<!-- Demo commit made by Claude to test repo access. Safe to delete. -->
