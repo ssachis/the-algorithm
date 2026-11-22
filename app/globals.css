@@ -1017,3 +1017,25 @@ html, body { overflow-x: hidden; }
 .hero .drop:focus-within { box-shadow: 0 0 0 7px rgba(36, 87, 214, .09), 0 28px 70px -16px rgba(36, 87, 214, .6); }
 
 @media (prefers-reduced-motion: reduce) { .hero::before { animation: none; } }
+
+/* steps v3: no numbers — the step itself lights up in turn, like light moving across water */
+.how-num, .how-steps::before { display: none !important; }
+.how-steps { gap: 12px; }
+.how-title {
+  display: inline-block; padding: 12px 26px; border-radius: 999px; font-size: 22px; color: var(--ink-3);
+  border: 1px solid transparent; background: transparent;
+  animation: step-glow 7.5s var(--ease) 2s infinite;
+}
+.how-title::after { display: none !important; }
+.how-step:nth-child(2) .how-title { animation-delay: 4.5s; }
+.how-step:nth-child(3) .how-title { animation-delay: 7s; }
+@keyframes step-glow {
+  0% { color: var(--ink-3); background: transparent; border-color: transparent; box-shadow: none; }
+  8%, 26% {
+    color: var(--ink); background: rgba(255, 255, 255, .85); border-color: rgba(36, 87, 214, .25);
+    box-shadow: 0 0 0 4px rgba(36, 87, 214, .05), 0 12px 34px -10px rgba(36, 87, 214, .45);
+  }
+  36%, 100% { color: var(--ink-3); background: transparent; border-color: transparent; box-shadow: none; }
+}
+.how-step:hover .how-title { animation: none; color: var(--ink); background: #fff; border-color: rgba(36, 87, 214, .25); box-shadow: 0 12px 34px -10px rgba(36, 87, 214, .45); }
+@media (prefers-reduced-motion: reduce) { .how-title { animation: none; color: var(--ink-2); } }
