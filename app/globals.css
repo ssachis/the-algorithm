@@ -1117,3 +1117,5 @@ html, body { overflow-x: hidden; }
 .cc-path.on { stroke-dasharray: none !important; animation: none !important; stroke-width: 1.6; opacity: .8 !important; }
 .cc-card.dim { opacity: .82; filter: saturate(.55) brightness(1.04); }
 .cc-path { display: none !important; }
+.cc-card.dim { opacity: 1 !important; filter: none !important; }
+.cc-card.selected { transform: translateY(-6px) scale(1.06); }
