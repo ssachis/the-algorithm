@@ -491,9 +491,6 @@ export default function CurrentCanvas({
           ))}
         </div>
 
-        <div className="cc-hint" aria-hidden>
-          {mode === "reach" ? "↑ beat their usual" : "↑ more views"} · → less similar
-        </div>
       </div>
 
       <div className="cc-toolbar" onPointerDown={(e) => e.stopPropagation()}>
