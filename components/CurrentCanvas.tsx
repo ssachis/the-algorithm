@@ -149,10 +149,12 @@ export default function CurrentCanvas({
   }, []);
 
   const fit = useCallback(() => {
-    // Never below 45%: at smaller scales the cards become unreadable on a laptop.
-    const k = Math.max(0.45, Math.min(box.w / layout.W, box.h / layout.H) * 0.96);
+    // Fit the lanes to the height (cards stay readable); if the current is wider than the
+    // screen, start at the left (your Short) and let people drag sideways instead of shrinking.
+    const k = Math.min(Math.max((box.h / layout.H) * 0.96, 0.5), 1.1);
+    const w = layout.W * k;
     setAnimate(true);
-    setView({ k, x: (box.w - layout.W * k) / 2, y: (box.h - layout.H * k) / 2 });
+    setView({ k, x: w <= box.w ? (box.w - w) / 2 : 8, y: (box.h - layout.H * k) / 2 });
   }, [box, layout]);
 
   const focusOn = useCallback(
@@ -171,8 +173,29 @@ export default function CurrentCanvas({
       fit();
     }
   }, [box, fit]);
+  // Breakout spotlight: flipping to "Remove creator size" re-fits, then the biggest
+  // outlier pops out, glows and opens in the inspector.
+  const [spot, setSpot] = useState<string | null>(null);
   useEffect(() => {
-    if (fitted.current) fit(); // re-fit when lanes change (mode toggle)
+    if (!fitted.current) return;
+    fit(); // re-fit when lanes change (mode toggle)
+    if (mode !== "reach") {
+      setSpot(null);
+      return;
+    }
+    const top = videos
+      .filter((v) => v.outperformance != null)
+      .sort((a, b) => (b.outperformance ?? 0) - (a.outperformance ?? 0))[0];
+    if (!top) return;
+    const t1 = setTimeout(() => {
+      setSpot(top.id);
+      onSelect(top.id);
+    }, 900); // after the cards have slid into their new lanes
+    const t2 = setTimeout(() => setSpot(null), 4200);
+    return () => {
+      clearTimeout(t1);
+      clearTimeout(t2);
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mode]);
   // Re-fit when the canvas is resized (inspector opens or closes, window resizes).
@@ -347,11 +370,11 @@ export default function CurrentCanvas({
             return (
               <div
                 key={v.id}
-                className="cc-pos"
+                className={`cc-pos ${spot === v.id ? "on-top" : ""}`}
                 style={{ transform: `translate(${p.x}px, ${p.y}px)`, width: CARD_W }}
                 onPointerDown={(e) => e.stopPropagation()}
               >
-                <div className="cc-in" style={{ animationDelay: `${200 + i * 40}ms` }}>
+                <div className={`cc-in ${spot === v.id ? "cc-spot" : ""}`} style={{ animationDelay: `${200 + i * 40}ms` }}>
                   <ShortCard
                     v={v}
                     mode={mode}

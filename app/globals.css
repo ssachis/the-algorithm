@@ -467,3 +467,15 @@ main.shell:has(.fs) { max-width: none; padding: 0; }
 .cc-tray-table thead th { font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-3); border-top: 0; }
 .cc-tray-table tbody th { color: var(--ink-2); }
 @media (max-width: 560px) { .cc-tray-table th, .cc-tray-table td { padding: 5px 4px; font-size: 12px; } }
+
+/* breakout spotlight (mode → "Remove creator size") */
+.cc-pos.on-top { z-index: 5; }
+.cc-spot { animation: cc-pop 3.2s var(--ease) both !important; }
+.cc-spot .cc-card { border-color: var(--water); }
+@keyframes cc-pop {
+  0% { transform: none; filter: none; }
+  18% { transform: translateY(-14px) scale(1.22); filter: drop-shadow(0 18px 30px rgba(77, 143, 214, .55)); }
+  70% { transform: translateY(-10px) scale(1.16); filter: drop-shadow(0 14px 26px rgba(77, 143, 214, .45)); }
+  100% { transform: none; filter: none; }
+}
+@media (prefers-reduced-motion: reduce) { .cc-spot { animation: none !important; } }
