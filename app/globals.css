@@ -816,3 +816,65 @@ body { background: var(--bg); }
 @keyframes motes { from { transform: translateY(0); opacity: .35; } to { transform: translateY(-60px); opacity: .1; } }
 @media (prefers-reduced-motion: reduce) { .cc-box::after { animation: none; } }
 html, body { overflow-x: hidden; }
+
+/* =========================================================================
+   MOONLIT SILVER — posh, light, high contrast. Cobalt only for key numbers.
+   ========================================================================= */
+:root {
+  --bg: #f6f7f9;
+  --surface: #ffffff;
+  --ink: #0e1726;
+  --ink-2: #3f4a5c;
+  --ink-3: #7b8594;
+  --line: #dfe3ea;
+  --mist: #eef1f5;
+  --pale: #d3d9e2;
+  --water: #2457d6;
+  --deep: #0e1726;
+  --silver: linear-gradient(135deg, #ffffff 0%, #d6dce5 45%, #f4f6f9 60%, #b9c2cf 100%);
+}
+/* never let focus scroll the page or canvas sideways */
+.fs, .fs-body, .fs-canvas, .cc-box { overflow: clip !important; }
+
+.cc-box, .fs-canvas .cc-box {
+  background:
+    radial-gradient(70% 45% at 70% 0%, rgba(255,255,255,.95), transparent 70%),
+    linear-gradient(180deg, #fbfcfd 0%, #f1f4f7 40%, #e4e9ef 75%, #d8dfe7 100%) !important;
+}
+.cc-box::before { opacity: .35; }
+.cc-box::after { display: none; }
+.cc-field { stroke: rgba(14, 23, 38, .07); stroke-dasharray: 2 10; }
+.cc-lane-tag, .cc-lane-tag.deep { color: #6b7483; }
+.cc-path.on, .cc-path.pulse { stroke: var(--water); opacity: .7 !important; }
+
+/* crisp cards with a fine silver frame */
+.cc-card { box-shadow: 0 0 0 1px rgba(14, 23, 38, .08), 0 12px 26px -14px rgba(14, 23, 38, .45); }
+.cc-card.dim { opacity: .62; filter: saturate(.75); }
+.cc-card.origin { box-shadow: 0 0 0 2px #fff, 0 0 0 3.5px var(--ink), 0 16px 30px -14px rgba(14,23,38,.5); }
+.cc-card.selected { box-shadow: 0 0 0 2px #fff, 0 0 0 4px var(--water), 0 22px 40px -16px rgba(36, 87, 214, .55); }
+/* breakouts: a silver sheen, not a blue glow */
+.cc-card.glow, .cc-pulse .cc-card {
+  box-shadow: 0 0 0 2px #fff, 0 0 0 3.5px #b7c0cd, 0 0 0 5px rgba(255,255,255,.9), 0 18px 40px -12px rgba(14, 23, 38, .45);
+}
+.cc-badge.outlier, .cc-badge.strong { background: var(--silver); color: var(--ink); box-shadow: 0 1px 2px rgba(14,23,38,.2); }
+.cc-badge.you { background: var(--ink); color: #fff; }
+
+/* text contrast */
+.lede-eyebrow { color: #6b7483; }
+.lede-title { color: var(--ink); }
+.lede-title em { color: var(--water); }
+.fs-top { background: linear-gradient(#fbfcfd 0%, rgba(251,252,253,.88) 55%, rgba(251,252,253,0)); }
+.fs-actions .ghost, .fs-actions .share-btn { color: var(--ink-2) !important; font-weight: 500; }
+.dock, .cc-toolbar, .cc-hint { background: rgba(255, 255, 255, .86); border-color: var(--line); }
+.dock-seg button, .dock .toggle button { color: #5c6676; }
+.dock-seg button[aria-pressed="true"] { background: var(--ink); color: #fff; }
+.dock .toggle .thumb { background: var(--silver); box-shadow: 0 1px 3px rgba(14,23,38,.15); }
+.dock .toggle button[aria-pressed="true"] { color: var(--ink); }
+
+/* inspector + playbook */
+.fs-inspector { background: #ffffff; border-left: 1px solid var(--line); }
+.fs-inspector .stats { border-top-color: var(--ink); }
+.pb-hooks button { background: var(--mist); }
+.pb-hooks button:hover { background: #e3e8ef; }
+.pb-next, .next { background: linear-gradient(135deg, #1b2537 0%, #0e1726 60%, #22314d 100%) !important; }
+.pb-next .eyebrow, .next .eyebrow { color: #c9d1dc; }

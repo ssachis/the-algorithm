@@ -439,11 +439,6 @@ export default function CurrentCanvas({
                 style={{
                   transform: `translate(${p.x}px, ${p.y}px)`,
                   width: p.w,
-                  // depth: the deeper the lane, the cooler and dimmer the Short
-                  filter: (() => {
-                    const t = layout.lanes.length > 1 ? p.lane / (layout.lanes.length - 1) : 0;
-                    return `saturate(${(1 - 0.15 * t).toFixed(2)})`;
-                  })(),
                 }}
                 onPointerDown={(e) => e.stopPropagation()}
               >
