@@ -471,7 +471,7 @@ export default function CurrentCanvas({
               const d =
                 `M-${seg * 2},${y} ` +
                 Array.from(
-                  { length: Math.ceil(layout.W / seg) + 4 },
+                  { length: Math.ceil(layout.W / seg) + 10 },
                   (_, k) => `Q${-seg * 2 + k * seg + seg / 2},${y + (k % 2 ? 10 : -10)} ${-seg * 2 + (k + 1) * seg},${y}`
                 ).join(" ");
               return <path key={`field-${l.key}`} d={d} className="cc-field" style={{ animationDelay: `${i * -1.3}s` }} />;

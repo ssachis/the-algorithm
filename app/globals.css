@@ -1128,3 +1128,5 @@ html, body { overflow-x: hidden; }
 .cc-paths .cc-field:nth-of-type(2n) { stroke: rgba(150, 165, 185, .35); animation-duration: 16s !important; animation-direction: reverse !important; }
 @keyframes field-flow { from { transform: translateX(0); } to { transform: translateX(-240px); } }
 @media (prefers-reduced-motion: reduce) { .cc-paths .cc-field { animation: none !important; } }
+.cc-paths .cc-field { stroke: rgba(36, 87, 214, .3); stroke-width: 2; }
+.cc-paths .cc-field:nth-of-type(2n) { stroke: rgba(140, 155, 178, .45); }
