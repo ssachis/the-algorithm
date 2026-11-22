@@ -24,9 +24,6 @@ Ask the room: *"Why?"*
 - Scroll to **Why it's moving now · via You.com**. Read one sentence, then open one cited source.
 - Say: *"You.com gives us the live context: why this idea is moving this week, with sources you can click."*
 
-- Point at the sources chips over the canvas and the **Meet your twin** card: the same idea on other platforms.
-- Say: *"Every other tool invents a reason. Wave separates what we measured, what we're guessing, and what nobody can know, then gives you one test to run."*
-
 ## 5. What we can't know (1:35–1:45)
 - Show the **Unknown** bucket.
 - Say: *"We can't see retention, impressions or how YouTube distributed these Shorts. We say so on the screen, not in a footnote."*
@@ -36,11 +33,6 @@ Ask the room: *"Why?"*
 - Close: *"The algorithm doesn't always get you. But now you can get it."*
 
 ---
-
-## Who pays
-- Small creators (1K–100K subs): free for 3 searches a day, $9/month unlimited.
-- Agencies managing several creators: $49/month.
-- Not validated yet. These are proposed prices for the pitch, not tested demand.
 
 ## Likely judge questions
 
