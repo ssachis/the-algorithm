@@ -28,14 +28,14 @@ const MAP_X = (CARD_W - MAP_SIZE) / 2;
 const MAP_Y = 425;
 
 // ---- palette (same tokens as app/globals.css) ----
-const INK = "#1f2a24";
-const INK_2 = "#526058";
-const INK_3 = "#8f9a93";
-const LINE = "#e7e9e3";
-const PALE = "#d3ddd6";
-const MIST = "#e8efeb";
-const WATER = "#6f8f7d";
-const DEEP = "#293a32";
+const INK = "#0d1b2a";
+const INK_2 = "#4a5868";
+const INK_3 = "#8a96a3";
+const LINE = "#e6ebf0";
+const PALE = "#d5dde6";
+const MIST = "#eef3f8";
+const WATER = "#3b7dd8";
+const DEEP = "#0b3d91";
 const SERIF = "Georgia, 'Times New Roman', serif";
 const SANS = "Inter, system-ui, -apple-system, 'Segoe UI', Arial, sans-serif";
 
@@ -43,8 +43,8 @@ const SANS = "Inter, system-ui, -apple-system, 'Segoe UI', Arial, sans-serif";
 function waterColor(op: number | null): string {
   if (op == null) return PALE;
   const t = Math.min(Math.max((Math.log10(op) + 1) / 3, 0), 1);
-  const a = [222, 231, 225];
-  const b = [41, 58, 50];
+  const a = [213, 221, 230];
+  const b = [11, 61, 145];
   const mix = a.map((x, i) => Math.round(x + (b[i] - x) * t));
   return `rgb(${mix.join(",")})`;
 }
@@ -120,7 +120,7 @@ export function buildShareSvg(data: AnalyzeResponse, mode: Mode): string {
     : "";
 
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${CARD_W}" height="${CARD_H}" viewBox="0 0 ${CARD_W} ${CARD_H}">
-  <rect width="${CARD_W}" height="${CARD_H}" fill="#faf9f6"/>
+  <rect width="${CARD_W}" height="${CARD_H}" fill="#ffffff"/>
   <text x="80" y="118" font-family="${SANS}" font-size="22" letter-spacing="4" fill="${INK_3}">CREATOR INTELLIGENCE</text>
   <text x="80" y="250" font-family="${SERIF}" font-size="92" fill="${INK}" letter-spacing="-1">${headlineTop}</text>
   <text x="80" y="345" font-family="${SERIF}" font-size="92" font-style="italic" fill="${WATER}" letter-spacing="-1">${headlineBottom}</text>
