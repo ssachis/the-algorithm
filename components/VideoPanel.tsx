@@ -16,7 +16,6 @@ export default function VideoPanel({ video, original }: { video: Video; original
 
   return (
     <aside className="card card-pad panel rise d1" aria-live="polite">
-      <span className="eyebrow">{isOriginal ? "Your Short" : "Similar Short"}</span>
 
       <ShortPlayer key={video.id} video={video} title={title} />
 
