@@ -12,20 +12,21 @@ Ask the room: *"Why?"*
 
 ## 2. Paste a Short live (0:20–0:50)
 - Paste the first demo Short into Wave.
-- The waves canvas appears. Your Short sits on the left; similar Shorts flow out to the right, in lanes. Closer = more similar.
-- Say: *"Every dot is a real Short on the same idea, sized by views."*
+- The waves canvas fills the screen. Your Short (marked **yours**) sits on the left; similar Shorts flow out to the right, in lanes by views. Further right = less similar.
+- Say: *"Every card is a real Short on the same idea. Higher means more views."*
 
 ## 3. Flip "Remove creator size" (0:50–1:15)
-- Click **Remove creator size**. Dots resize by **views ÷ subscribers**.
-- Say: *"Views alone measure the creator as much as the idea. Dividing by subscribers asks: did this beat its creator's usual reach?"*
-- Point at one outlier and read its label (e.g. "Outlier >3×").
+- In the bottom dock, click **Remove creator size**. Cards move lanes by **views ÷ that creator's median views on their recent Shorts** (÷ subscribers only when the median isn't available). The breakouts pop up for a moment.
+- Say: *"Views alone measure the creator as much as the idea. Comparing each Short to its creator's usual asks: did this one beat their normal reach?"*
+- Click one breakout. The inspector opens with the Short playing; read its label (e.g. "Outlier >3×") and the "vs. their usual" number.
 
-## 4. Verdict with You.com sources (1:15–1:35)
+## 4. Why, with You.com sources (1:15–1:35)
+- Click **Why** (top right). The sheet opens with **Meet your twin**: the same idea on TikTok, Reddit or Instagram, found by You.com.
 - Scroll to **Why it's moving now · via You.com**. Read one sentence, then open one cited source.
-- Say: *"You.com gives us the live context: why this idea is moving this week, with sources you can click."*
+- Say: *"You.com gives us the live context: where else this idea is moving this week and why, with sources you can click."*
 
 ## 5. What we can't know (1:35–1:45)
-- Show the **Unknown** bucket.
+- In the same sheet, show the **Unknown** column, next to Observed and Hypotheses.
 - Say: *"We can't see retention, impressions or how YouTube distributed these Shorts. We say so on the screen, not in a footnote."*
 
 ## 6. One experiment and close (1:45–2:00)
@@ -37,7 +38,7 @@ Ask the room: *"Why?"*
 ## Likely judge questions
 
 **Q: Where does the data come from? Can you see retention or impressions?**
-A: Public metrics only, from the YouTube Data API v3: views, likes, subscribers (when public), duration and publish date. We cannot see retention, impressions or traffic sources, and the product says so. Results are cached, so a repeat demo uses no extra quota.
+A: Public metrics only, from the YouTube Data API v3: views, likes, subscribers (when public), duration and publish date. "Remove creator size" compares each Short with the median views of that creator's recent Shorts, and the card shows how many Shorts that median is based on. We cannot see retention, impressions or traffic sources, and the product says so. Results are cached, so a repeat demo uses no extra quota.
 
 **Q: Why only YouTube? Why not TikTok or Instagram?**
 A: The build uses YouTube's public data for Shorts. Other platforms would need their own data access, which we haven't evaluated yet. Expanding is a next step, not something we've tested.
