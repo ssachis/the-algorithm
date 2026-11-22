@@ -91,6 +91,24 @@ export const mockResponse: AnalyzeResponse = {
     nextExperiment:
       "Re-cut the same footage as a 7-day experiment with a verdict in the first two seconds, and post it within the next week while the counter-take wave is still rising.",
   },
+  elsewhere: [
+    {
+      platform: "Reddit",
+      title: "Demo: a thread arguing the 7-day format is overdone",
+      url: "https://example.com/demo/reddit-thread",
+      snippet: "Demo data. Replace with a live You.com result.",
+    },
+    {
+      platform: "TikTok",
+      title: "Demo: the same hook, filmed on a phone in one take",
+      url: "https://example.com/demo/tiktok-take",
+    },
+    {
+      platform: "News",
+      title: "Demo: a trade piece on the verdict-first format",
+      url: "https://example.com/demo/news-piece",
+    },
+  ],
   generatedAt: new Date(NOW).toISOString(),
   source: "mock",
   elsewhere: [

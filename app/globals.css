@@ -513,3 +513,33 @@ main.shell:has(.fs) { max-width: none; padding: 0; }
 .cc-path:not(.on) { opacity: 0 !important; }
 .cc-card.glow { box-shadow: 0 0 0 2px rgba(255,255,255,.9), 0 0 0 3px rgba(77, 143, 214, .55), 0 0 34px rgba(77, 143, 214, .5); }
 .cc-card.glow.dim { filter: none; opacity: .8; }
+
+/* #33: source chips over the canvas, and "Meet your twin" card */
+.fs-canvas { position: relative; }
+.src-chips {
+  position: absolute; left: 28px; bottom: 60px; z-index: 2;
+  display: flex; flex-wrap: wrap; align-items: center; gap: 6px; max-width: calc(100% - 56px);
+  pointer-events: none;
+}
+.src-label { font-size: 12px; color: var(--ink-2); margin-right: 2px; }
+.src-chip {
+  pointer-events: auto; font-size: 12px; color: var(--deep); text-decoration: none;
+  background: rgba(255,255,255,0.92); border: 1px solid var(--line); border-radius: 999px;
+  padding: 4px 10px; max-width: 220px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  transition: border-color .3s ease;
+}
+.src-chip:hover { border-color: var(--water); }
+.twin-card {
+  margin: 8px 20px 0; padding: 16px 20px; border: 1px solid var(--line); border-radius: 14px;
+  background: var(--bg);
+}
+.twin-title { margin: 0; font-size: 20px; font-weight: 500; color: var(--deep); }
+.twin-sub { margin: 4px 0 10px; font-size: 13px; color: var(--ink-2); }
+.twin-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.twin-tag {
+  display: inline-block; font-size: 11px; color: var(--deep); background: var(--pale);
+  border-radius: 999px; padding: 2px 8px; margin-right: 8px; vertical-align: middle;
+}
+.twin-link { color: var(--ink); text-decoration: none; font-size: 14px; }
+.twin-link:hover { color: var(--water); }
+.twin-snip { margin: 4px 0 0; font-size: 13px; color: var(--ink-2); }
