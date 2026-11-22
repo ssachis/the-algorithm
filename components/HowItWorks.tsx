@@ -17,7 +17,7 @@ export default function HowItWorks() {
         {STEPS.map((s, i) => (
           <li key={s.title} className="how-step">
             <span className="how-num" aria-hidden>
-              {i + 1}
+              {String(i + 1).padStart(2, "0")}
             </span>
             <h3 className="how-title serif">{s.title}</h3>
           </li>
