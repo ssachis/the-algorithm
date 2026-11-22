@@ -1,12 +1,17 @@
 import type { Video } from "@/lib/types";
-import { formatCount, formatX } from "@/lib/score";
+import { formatCount, formatX, perfLevel, PERF_DEFINITION, PERF_LABEL } from "@/lib/score";
+import { sharedTerms } from "@/lib/insights";
 
 function ago(iso: string) {
   const d = Math.round((Date.now() - new Date(iso).getTime()) / 86_400_000);
   return d <= 0 ? "today" : d === 1 ? "1 day ago" : `${d} days ago`;
 }
 
-export default function VideoPanel({ video, isOriginal }: { video: Video; isOriginal: boolean }) {
+export default function VideoPanel({ video, original }: { video: Video; original: Video }) {
+  const isOriginal = video.id === original.id;
+  const lvl = perfLevel(video.outperformance);
+  const why = isOriginal ? null : sharedTerms(original, video);
+
   return (
     <aside className="card card-pad panel rise d1" aria-live="polite">
       <span className="eyebrow">{isOriginal ? "Your Short" : "Similar Short"}</span>
@@ -15,10 +20,14 @@ export default function VideoPanel({ video, isOriginal }: { video: Video; isOrig
         {video.channelTitle} · {ago(video.publishedAt)} · {video.durationSec}s
       </div>
 
+      <div style={{ marginTop: 14 }}>
+        <span className={`perf ${lvl}`}>{PERF_LABEL[lvl]}</span>
+      </div>
+
       <div className="stats">
         <div className="stat hero-stat">
           <div className="v">{formatX(video.outperformance)}</div>
-          <div className="k">vs. their reach</div>
+          <div className="k">views ÷ subscribers</div>
         </div>
         <div className="stat">
           <div className="v">{formatCount(video.views)}</div>
@@ -34,14 +43,16 @@ export default function VideoPanel({ video, isOriginal }: { video: Video; isOrig
         </div>
       </div>
 
-      {!isOriginal && (
-        <span className="pill">{Math.round(video.similarity * 100)}% similar to yours</span>
-      )}
-      {video.hashtags.length > 0 && (
-        <div className="faint" style={{ fontSize: 12, marginTop: 12 }}>
-          {video.hashtags.join("  ")}
+      <div className="definition">{PERF_DEFINITION}</div>
+
+      {why && (
+        <div className="why">
+          <b>Why it's here:</b> {Math.round(video.similarity * 100)}% similarity
+          {why.tags.length > 0 && <> · shares {why.tags.join(" ")}</>}
+          {why.words.length > 0 && <> · title words &ldquo;{why.words.slice(0, 4).join(", ")}&rdquo;</>}
         </div>
       )}
+
       <div style={{ marginTop: 16 }}>
         <a className="linkbtn" href={video.url} target="_blank" rel="noreferrer">
           Open on YouTube ↗

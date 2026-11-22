@@ -5,16 +5,17 @@ import Rings from "@/components/Rings";
 import RippleMap, { type Mode } from "@/components/RippleMap";
 import ModeToggle from "@/components/ModeToggle";
 import VideoPanel from "@/components/VideoPanel";
+import VideoList, { SORTS, type Sort } from "@/components/VideoList";
 import Verdict from "@/components/Verdict";
 import type { AnalyzeResponse } from "@/lib/types";
 
 type Phase = "idle" | "loading" | "done";
 
 const LOADING_LINES = [
-  "Finding Shorts with the same idea…",
-  "Measuring each creator's usual reach…",
-  "Asking the web why this is trending…",
-  "Reading the ripples…",
+  "Reading the original video…",
+  "Looking for related videos…",
+  "Comparing creator baselines…",
+  "Preparing your comparison…",
 ];
 
 const DEMO_URL = "https://youtube.com/shorts/demo";
@@ -24,6 +25,8 @@ export default function Home() {
   const [data, setData] = useState<AnalyzeResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [mode, setMode] = useState<Mode>("views");
+  const [view, setView] = useState<"map" | "list">("map");
+  const [sort, setSort] = useState<Sort>("similar");
   const [selectedId, setSelectedId] = useState<string>("");
   const [line, setLine] = useState(0);
 
@@ -49,6 +52,7 @@ export default function Home() {
       setData(d);
       setSelectedId(d.original.id);
       setMode("views");
+      setView("map");
       setPhase("done");
     } catch (e) {
       setError(e instanceof Error ? e.message : "Something went wrong.");
@@ -84,19 +88,19 @@ export default function Home() {
           <div className="hero-inner rise">
             <span className="eyebrow">Same idea. Different outcomes.</span>
             <h1 className="serif">
-              Why did <em>theirs</em> take&nbsp;off
+              Your idea didn&apos;t
               <br />
-              and yours didn&apos;t?
+              <em>stop with you.</em>
             </h1>
             <p className="lede">
-              Drop in a YouTube Short. See every version of the same idea ripple out from yours, and what
-              the breakouts did differently.
+              Find Shorts built around a similar idea, compare how they performed against their creators&apos;
+              usual reach, and see what the public data can actually tell you.
             </p>
             <DropInput onSubmit={analyze} />
             {error && <div className="error">{error}</div>}
             <div style={{ marginTop: 18 }}>
               <button className="linkbtn" onClick={() => analyze(DEMO_URL)}>
-                or try a demo
+                or see an example
               </button>
             </div>
           </div>
@@ -118,7 +122,7 @@ export default function Home() {
             <div>
               <span className="eyebrow">
                 {data.similar.length} Shorts on &ldquo;{data.query}&rdquo;
-                {data.source === "mock" ? " · demo data" : ""}
+                {data.source === "mock" ? " · illustrative demo data" : ""}
               </span>
               <h2 className="serif">
                 Your idea made waves.
@@ -130,19 +134,40 @@ export default function Home() {
 
           <div className="grid">
             <div className="card map-wrap rise">
-              <div className="map-head">
-                <span className="eyebrow">Ripple map</span>
-                <ModeToggle mode={mode} onChange={setMode} />
+              <div className="controls">
+                <div className="chips">
+                  <button className="chip" aria-pressed={view === "map"} onClick={() => setView("map")}>
+                    Ripples
+                  </button>
+                  <button className="chip" aria-pressed={view === "list"} onClick={() => setView("list")}>
+                    List
+                  </button>
+                </div>
+                {view === "map" ? (
+                  <ModeToggle mode={mode} onChange={setMode} />
+                ) : (
+                  <div className="chips">
+                    {SORTS.map((s) => (
+                      <button key={s.id} className="chip" aria-pressed={sort === s.id} onClick={() => setSort(s.id)}>
+                        {s.label}
+                      </button>
+                    ))}
+                  </div>
+                )}
               </div>
-              <RippleMap
-                original={data.original}
-                videos={data.similar}
-                mode={mode}
-                selectedId={selectedId}
-                onSelect={setSelectedId}
-              />
+              {view === "map" ? (
+                <RippleMap
+                  original={data.original}
+                  videos={data.similar}
+                  mode={mode}
+                  selectedId={selectedId}
+                  onSelect={setSelectedId}
+                />
+              ) : (
+                <VideoList videos={data.similar} sort={sort} selectedId={selectedId} onSelect={setSelectedId} />
+              )}
             </div>
-            <VideoPanel key={selected.id} video={selected} isOriginal={selected.id === data.original.id} />
+            <VideoPanel key={selected.id} video={selected} original={data.original} />
           </div>
 
           <Verdict verdict={data.verdict} original={data.original} videos={data.similar} />

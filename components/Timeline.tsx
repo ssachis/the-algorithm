@@ -20,13 +20,13 @@ export default function Timeline({ original, videos }: { original: Video; videos
             cx={x(new Date(v.publishedAt).getTime())}
             cy={40}
             r={3 + 12 * Math.sqrt((v.outperformance ?? 0) / maxOp)}
-            fill="#0b3d91"
+            fill="#293a32"
             fillOpacity={0.25}
           >
             <title>{v.title}</title>
           </circle>
         ))}
-        <circle cx={x(new Date(original.publishedAt).getTime())} cy={40} r={6} fill="#fff" stroke="#3b7dd8" strokeWidth={2.5} />
+        <circle cx={x(new Date(original.publishedAt).getTime())} cy={40} r={6} fill="#fff" stroke="#6f8f7d" strokeWidth={2.5} />
       </svg>
       <div className="faint" style={{ display: "flex", justifyContent: "space-between", fontSize: 11 }}>
         <span>earliest</span>

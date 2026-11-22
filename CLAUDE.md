@@ -32,7 +32,10 @@ lib/mock-data.ts          fictional demo data in the exact AnalyzeResponse shape
 1. **Stay inside your issue's files.** If you must touch a file owned by someone else, say so in the PR.
 2. **`lib/types.ts` is the contract.** UI reads only `AnalyzeResponse`. Backend returns only `AnalyzeResponse`.
 3. **Never commit keys.** Use `.env.local`. Read keys only on the server (route handlers / `lib/*` used by routes).
-4. **Design language:** white, quiet, water. One accent (`--water` / `--deep`). Serif (`.serif`) for voice,
+4. **Design language:** quiet, editorial, still water. Warm ivory `#FAF9F6`, mist `#E8EFEB`, sage `#A8BCAF`,
+   forest `#293A32` (see `:root` in globals.css). Accent only for selection or meaningful performance.
+   Evidence discipline in UI: Observed / Hypotheses / Unknown are always separate. Performance labels
+   (Below usual <0.5×, Around usual, Strong 1.5–3×, Outlier >3×) are project-defined; show the definition. Serif (`.serif`) for voice,
    Inter for data. Generous spacing, rounded cards, slow eased motion. No emojis in UI, no charts libraries,
    no dark mode. Reuse CSS variables; add new classes to `globals.css`.
 5. **Honesty is a feature:** never claim to know YouTube's internal algorithm, never invent retention,

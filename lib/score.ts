@@ -69,3 +69,22 @@ export function formatX(x: number | null): string {
   if (x >= 10) return `${Math.round(x)}×`;
   return `${x.toFixed(1)}×`;
 }
+
+/** Project-defined labels (not YouTube categories). */
+export type PerfLevel = "below" | "around" | "strong" | "outlier" | "na";
+export function perfLevel(x: number | null): PerfLevel {
+  if (x == null) return "na";
+  if (x < 0.5) return "below";
+  if (x < 1.5) return "around";
+  if (x <= 3) return "strong";
+  return "outlier";
+}
+export const PERF_LABEL: Record<PerfLevel, string> = {
+  below: "Below usual",
+  around: "Around usual",
+  strong: "Strong",
+  outlier: "Outlier",
+  na: "No baseline",
+};
+export const PERF_DEFINITION =
+  "Relative performance = views ÷ subscribers (small channels floored at 100). A rough comparison, not a ranking signal.";
