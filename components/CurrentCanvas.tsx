@@ -169,14 +169,17 @@ export default function CurrentCanvas({
   const fit = useCallback(() => {
     // Fit the lanes to the height (cards stay readable); if the current is wider than the
     // screen, start at the left (your Short) and let people drag sideways instead of shrinking.
-    const k = Math.min(Math.max((box.h / layout.H) * 0.96, 0.5), 1.1);
+    // Leave the top band for the editorial headline.
+    const RESERVE = box.h > 640 ? 230 : 150;
+    const avail = box.h - RESERVE - 70; // and room for the dock
+    const k = Math.min(Math.max((avail / layout.H) * 0.98, 0.42), 1.1);
     const w = layout.W * k;
     setAnimate(true);
-    setView({ k, x: w <= box.w ? (box.w - w) / 2 : 8, y: (box.h - layout.H * k) / 2 });
+    setView({ k, x: w <= box.w ? (box.w - w) / 2 : 8, y: RESERVE + (avail - layout.H * k) / 2 });
   }, [box, layout]);
 
   const focusOn = useCallback(
-    (id: string, k = Math.max(view.k, 1)) => {
+    (id: string, k = view.k) => {
       const p = layout.pos[id];
       if (!p) return;
       setAnimate(true);

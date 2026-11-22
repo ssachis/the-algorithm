@@ -627,3 +627,92 @@ main.shell:has(.fs) { max-width: none; padding: 0; }
 .wordmark .logo, .wordmark .logo-word { color: var(--deep); }
 .logo-img { height: 1.3em; width: auto; display: block; mix-blend-mode: multiply; }
 .logo-img { height: 1.05em; }
+
+/* =========================================================================
+   EDITORIAL PASS — warm paper, ink navy, one cobalt accent (matches the logo)
+   ========================================================================= */
+:root {
+  --bg: #f7f4ee;          /* paper */
+  --surface: #fffdf9;
+  --ink: #141a2a;         /* ink navy */
+  --ink-2: #545a6b;
+  --ink-3: #9a9688;
+  --line: #e6e0d4;        /* warm hairline */
+  --mist: #efeae0;
+  --pale: #ddd5c6;
+  --water: #2f5bea;       /* cobalt */
+  --deep: #141a2a;
+}
+body { background: var(--bg); }
+::selection { background: #2f5bea22; }
+
+/* canvas = paper with a faint grain of currents */
+.cc-box, .fs-canvas .cc-box {
+  background:
+    radial-gradient(90% 70% at 85% 20%, rgba(47, 91, 234, .06), transparent 60%),
+    radial-gradient(70% 60% at 10% 90%, rgba(214, 171, 102, .08), transparent 60%),
+    #f7f4ee !important;
+}
+.cc-field { stroke: rgba(20, 26, 42, .07); stroke-dasharray: 2 9; }
+.cc-path.on, .cc-path.pulse { stroke: var(--water); }
+.cc-lane-tag { font-family: var(--font-serif), Georgia, serif; font-style: italic; text-transform: none; letter-spacing: 0; font-size: 15px; color: #8c8677; }
+
+/* cards: printed photographs */
+.cc-card { border-radius: 10px; box-shadow: 0 1px 0 rgba(20,26,42,.04), 0 10px 24px -10px rgba(20, 26, 42, .28); }
+.cc-thumb { border-radius: 10px; }
+.cc-card:hover { transform: translateY(-5px) rotate(-.6deg); box-shadow: 0 22px 40px -14px rgba(20, 26, 42, .4); }
+.cc-card.dim { opacity: .38; filter: grayscale(.7); }
+.cc-card.origin { box-shadow: 0 0 0 3px var(--bg), 0 0 0 4.5px var(--ink), 0 14px 30px -12px rgba(20,26,42,.45); }
+.cc-card.selected { box-shadow: 0 0 0 3px var(--bg), 0 0 0 5px var(--water), 0 22px 44px -14px rgba(47, 91, 234, .45); }
+.cc-card.glow { box-shadow: 0 0 0 3px var(--bg), 0 0 0 4.5px var(--water), 0 0 46px rgba(47, 91, 234, .38); }
+.cc-pulse .cc-card { box-shadow: 0 0 0 3px var(--bg), 0 0 0 4.5px rgba(47, 91, 234, .8), 0 0 50px rgba(47, 91, 234, .35); }
+.cc-badge { background: var(--surface); color: var(--ink); font-family: var(--font-serif), Georgia, serif; font-size: 13px; font-weight: 400; padding: 1px 8px; border-radius: 4px; }
+.cc-badge.outlier, .cc-badge.strong { background: var(--water); color: #fff; }
+.cc-badge.you { background: var(--ink); color: var(--bg); font-family: var(--font-sans); font-size: 10px; letter-spacing: .08em; text-transform: uppercase; }
+
+/* editorial headline over the canvas */
+.lede { position: absolute; z-index: 5; top: 78px; left: 28px; max-width: 620px; pointer-events: none; animation: lede-in .9s var(--ease) .15s both; }
+.lede-eyebrow { font-size: 11px; letter-spacing: .18em; text-transform: uppercase; color: var(--ink-3); }
+.lede-title { font-size: clamp(30px, 3.3vw, 46px); line-height: 1.04; letter-spacing: -0.02em; margin: 10px 0 10px; color: var(--ink); }
+.lede-title em { font-style: italic; color: var(--water); }
+.lede-you { font-style: italic; border-bottom: 2px solid var(--ink); }
+.lede-sub { margin: 0; font-size: 13px; color: var(--ink-2); max-width: 420px; }
+@keyframes lede-in { from { opacity: 0; transform: translateY(12px); filter: blur(4px); } to { opacity: 1; transform: none; filter: none; } }
+
+/* top bar sits on the paper, only over the canvas */
+.fs-top { background: linear-gradient(var(--bg) 0%, rgba(247, 244, 238, .85) 55%, rgba(247, 244, 238, 0)); }
+.fs-actions .ghost, .fs-actions .share-btn { color: var(--ink-2) !important; font-size: 13px; }
+.fs-actions .ghost:hover, .fs-actions .share-btn:hover, .fs-actions .ghost[aria-pressed="true"] { background: rgba(20, 26, 42, .05) !important; color: var(--ink) !important; }
+
+/* dock: ink capsule */
+.dock { background: rgba(255, 253, 249, .8); border-color: var(--line); box-shadow: 0 14px 40px -12px rgba(20, 26, 42, .3); }
+.dock-seg button[aria-pressed="true"] { background: var(--ink); color: var(--bg); }
+.dock .toggle .thumb { background: rgba(47, 91, 234, .1); }
+.dock .toggle button[aria-pressed="true"] { color: var(--water); }
+.cc-toolbar { background: rgba(255, 253, 249, .8); border-color: var(--line); }
+.cc-hint { background: rgba(255, 253, 249, .8); }
+
+/* inspector: a magazine sidebar, not a dashboard */
+.fs-inspector { background: var(--surface); border-left: 1px solid var(--line); backdrop-filter: none; padding: 22px 26px; }
+.fs-inspector .player { max-width: 220px; border-radius: 12px; margin: 6px auto 22px; box-shadow: 0 24px 50px -20px rgba(20,26,42,.5); }
+.fs-inspector .eyebrow { letter-spacing: .18em; }
+.fs-inspector h3 { font-size: 28px; line-height: 1.08; letter-spacing: -0.015em; margin: 6px 0 8px; }
+.fs-inspector .faint { font-size: 12px !important; }
+.fs-inspector .perf { font-family: var(--font-serif), Georgia, serif; font-style: italic; font-size: 14px; padding: 0; background: none !important; color: var(--water) !important; border: 0 !important; }
+.fs-inspector .stats { grid-template-columns: repeat(4, 1fr); background: none; border: 0; border-top: 1px solid var(--ink); border-bottom: 1px solid var(--line); border-radius: 0; gap: 0; margin: 16px 0 12px; }
+.fs-inspector .stat { background: none; padding: 12px 6px 10px 0; }
+.fs-inspector .stat .v { font-family: var(--font-serif), Georgia, serif; font-size: 26px; line-height: 1; color: var(--ink); }
+.fs-inspector .stat.hero-stat .v { color: var(--water); }
+.fs-inspector .stat .k { font-size: 9px; letter-spacing: .12em; margin-top: 6px; line-height: 1.3; }
+.fs-inspector .definition { font-size: 11px; }
+.fs-inspector .why { font-size: 13px; border-left: 2px solid var(--water); padding-left: 10px; }
+.fs-close { color: var(--ink-3); }
+
+/* landing on paper */
+.drop { background: var(--surface); border-color: var(--line); }
+.btn { background: var(--ink); }
+.btn:hover { background: var(--water); }
+.hero h1 em { color: var(--water); }
+.next { background: radial-gradient(120% 140% at 0% 0%, #2f5bea 0%, #1a2b6b 55%, #141a2a 100%) !important; }
+.sheet { background: rgba(255, 253, 249, .97); }
+.fs-inspector .player { max-width: 180px; }

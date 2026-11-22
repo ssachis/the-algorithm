@@ -10,6 +10,7 @@ import VideoList, { SORTS, type Sort } from "@/components/VideoList";
 import Verdict from "@/components/Verdict";
 import HowItWorks from "@/components/HowItWorks";
 import Logo from "@/components/Logo";
+import Lede from "@/components/Lede";
 import ShareCard from "@/components/ShareCard";
 import { TwinCard } from "@/components/Sources";
 import type { AnalyzeResponse } from "@/lib/types";
@@ -137,38 +138,39 @@ export default function Home() {
 
       {phase === "done" && data && (
         <div className="fs">
-          <header className="fs-top">
-            <a
-              href="/"
-              className="wordmark"
-              onClick={(e) => {
-                e.preventDefault();
-                setPhase("idle");
-                setData(null);
-              }}
-            >
-              <Logo />
-            </a>
-            <span className="fs-query" />
-            <nav className="fs-actions">
-              <button className="ghost" aria-pressed={showWhy} onClick={() => setShowWhy((v) => !v)}>
-                Why
-              </button>
-              <ShareCard data={data} mode={mode} />
-              <button
-                className="ghost"
-                onClick={() => {
+
+          <div className={`fs-body ${selected ? "with-inspector" : ""}`}>
+            <div className="fs-canvas">
+            <header className="fs-top">
+              <a
+                href="/"
+                className="wordmark"
+                onClick={(e) => {
+                  e.preventDefault();
                   setPhase("idle");
                   setData(null);
                 }}
               >
-                New
-              </button>
-            </nav>
-          </header>
-
-          <div className={`fs-body ${selected ? "with-inspector" : ""}`}>
-            <div className="fs-canvas">
+                <Logo />
+              </a>
+              <span className="fs-query" />
+              <nav className="fs-actions">
+                <button className="ghost" aria-pressed={showWhy} onClick={() => setShowWhy((v) => !v)}>
+                  Why
+                </button>
+                <ShareCard data={data} mode={mode} />
+                <button
+                  className="ghost"
+                  onClick={() => {
+                    setPhase("idle");
+                    setData(null);
+                  }}
+                >
+                  New
+                </button>
+              </nav>
+            </header>
+              <Lede data={data} mode={mode} />
               {view === "waves" ? (
                 <CurrentCanvas
                   original={data.original}
