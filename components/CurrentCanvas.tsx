@@ -442,7 +442,7 @@ export default function CurrentCanvas({
                   // depth: the deeper the lane, the cooler and dimmer the Short
                   filter: (() => {
                     const t = layout.lanes.length > 1 ? p.lane / (layout.lanes.length - 1) : 0;
-                    return `saturate(${(1 - 0.28 * t).toFixed(2)}) brightness(${(1 - 0.1 * t).toFixed(2)})`;
+                    return `saturate(${(1 - 0.15 * t).toFixed(2)})`;
                   })(),
                 }}
                 onPointerDown={(e) => e.stopPropagation()}
@@ -469,7 +469,7 @@ export default function CurrentCanvas({
           {layout.lanes.map((l, i) => (
             <span
               key={`${mode}-lbl-${l.key}`}
-              className="cc-lane-tag"
+              className={`cc-lane-tag ${layout.lanes.length > 1 && i / (layout.lanes.length - 1) > 0.45 ? "deep" : ""}`}
               style={{ top: view.y + (TOP + i * LANE_H + LANE_H / 2) * view.k }}
             >
               {l.label}

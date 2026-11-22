@@ -788,3 +788,30 @@ body { background: var(--bg); }
 .pb-next p { margin: 8px 0 0; font-size: 19px; line-height: 1.25; }
 .pb-foot { font-size: 11px; color: var(--ink-3); margin: 14px 0 0; }
 .pb-next p { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; font-size: 17px; } .pb-title { font-size: 34px; margin-bottom: 12px; }
+
+/* deep ocean: sunlit surface → deep navy */
+.cc-box, .fs-canvas .cc-box {
+  background: linear-gradient(180deg,
+    #eef8fc 0%, #cfe9f4 18%, #8cc4e0 38%, #3f86b8 58%, #1b4f80 76%, #0b2747 92%, #071a33 100%) !important;
+}
+.cc-lane-tag.deep { color: rgba(224, 240, 250, .72); }
+.cc-field { stroke: rgba(255, 255, 255, .14); }
+/* deep-water cards glow softly, like bioluminescence */
+.cc-card { box-shadow: 0 10px 28px -10px rgba(3, 14, 30, .55); }
+.cc-card.glow, .cc-pulse .cc-card { box-shadow: 0 0 0 2.5px rgba(255,255,255,.95), 0 0 0 4px #4fb3ff, 0 0 48px rgba(120, 205, 255, .75); }
+.cc-path.on, .cc-path.pulse { stroke: #8fd3ff; }
+.cc-card.dim { opacity: .5; filter: grayscale(.4) brightness(.85); }
+.cc-hint, .dock, .cc-toolbar { background: rgba(244, 250, 253, .82); }
+/* a few slow rising motes in deep water (very subtle) */
+.cc-box::after {
+  content: ""; position: absolute; inset: 45% 0 0 0; pointer-events: none; z-index: 0; opacity: .35;
+  background-image:
+    radial-gradient(1.5px 1.5px at 12% 80%, #cfefff 50%, transparent 51%),
+    radial-gradient(1px 1px at 33% 60%, #cfefff 50%, transparent 51%),
+    radial-gradient(1.5px 1.5px at 58% 85%, #cfefff 50%, transparent 51%),
+    radial-gradient(1px 1px at 77% 55%, #cfefff 50%, transparent 51%),
+    radial-gradient(1.5px 1.5px at 91% 75%, #cfefff 50%, transparent 51%);
+  animation: motes 18s linear infinite;
+}
+@keyframes motes { from { transform: translateY(0); opacity: .35; } to { transform: translateY(-60px); opacity: .1; } }
+@media (prefers-reduced-motion: reduce) { .cc-box::after { animation: none; } }
