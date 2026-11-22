@@ -20,7 +20,6 @@ export default function HowItWorks() {
               {i + 1}
             </span>
             <h3 className="how-title serif">{s.title}</h3>
-            <p className="how-body">{s.body}</p>
           </li>
         ))}
       </ol>
