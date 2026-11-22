@@ -11,12 +11,32 @@ leave with one concrete experiment for your next post.
 
 Built at **Creator Economy Hack NYC** (You.com × localhost:nyc × GenZtea).
 
+**Live demo:** [TBD: live link]  ·  **Pitch script:** [docs/PITCH.md](docs/PITCH.md)  ·  **Demo post:** [docs/POST.md](docs/POST.md)
+
+## The ripple map
+
+| Raw views | Remove creator size |
+| --- | --- |
+| ![Ripple map sized by raw views](docs/screenshots/ripple-views.png) | ![Ripple map sized by views divided by subscribers](docs/screenshots/ripple-reach.png) |
+
+Screen recording of the toggle: [docs/screenshots/ripple-toggle-demo.mp4](docs/screenshots/ripple-toggle-demo.mp4)
+
+Screenshots use the demo data (`USE_MOCK=1`), which is fictional.
+
 ## How it works
 1. **Drop** a YouTube Short link.
 2. **Find** similar Shorts with the YouTube Data API and You.com search.
-3. **Normalize**: outperformance = views ÷ subscribers (floored at 100).
-4. **Explain**: You.com gives live, cited context on the trend; the verdict separates what we observed,
-   what might explain it, and what public data can't tell us.
+3. **Normalize**: outperformance = views ÷ subscribers (floored at 100). Hidden counts show as "hidden".
+4. **Explain**: the verdict separates what we observed, what might explain it, and what public data can't tell us.
+
+## How it uses You.com
+- **Web Search API** finds recent coverage of the idea. We keep only results that come back with real URLs.
+- **Research API** writes a 2–3 sentence summary of why the idea is moving now, with cited sources.
+- **Research API** (second call) turns the computed numbers for the top and bottom five Shorts into the breakout
+  patterns, timing and unknowns. It sees only those numbers, and falls back to a numbers-only verdict on any failure
+  or after 12 seconds.
+
+Code: [`lib/youcom.ts`](lib/youcom.ts). Try it with `npx tsx scripts/try-youcom.ts`.
 
 ## Run locally
 ```bash
@@ -29,5 +49,3 @@ npm run dev
 - Sachi Singh — product, UI, end-to-end flow
 - Melody — backend and data pipeline
 - Khyati — pitch, demo and frontend components
-
-_Pitch, screenshots and demo video coming soon._
