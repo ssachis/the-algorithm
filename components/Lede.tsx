@@ -3,7 +3,7 @@ import { formatX } from "@/lib/score";
 import type { Mode } from "./RippleMap";
 
 // Editorial headline over the canvas: the one thing worth knowing, computed from the numbers.
-export default function Lede({ data, mode }: { data: AnalyzeResponse; mode: Mode }) {
+export default function Lede({ data, mode, away }: { data: AnalyzeResponse; mode: Mode; away?: boolean }) {
   const { original, similar } = data;
   const ranked = similar
     .filter((v) => v.outperformance != null)
@@ -13,7 +13,7 @@ export default function Lede({ data, mode }: { data: AnalyzeResponse; mode: Mode
   const yours = original.outperformance;
 
   return (
-    <div className="lede" key={mode}>
+    <div className={`cv-lede ${away ? "away" : ""}`} key={mode}>
       <span className="lede-eyebrow">
         {similar.length} Shorts · same idea{data.source === "mock" ? " · illustrative" : ""}
       </span>

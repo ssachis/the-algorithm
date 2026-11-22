@@ -37,6 +37,7 @@ export default function Home() {
   const [selectedId, setSelectedId] = useState<string>("");
   const [showWhy, setShowWhy] = useState(false);
   const [hidePlaybook, setHidePlaybook] = useState(true);
+  const [ledeAway, setLedeAway] = useState(false);
   const [line, setLine] = useState(0);
 
   useEffect(() => {
@@ -183,7 +184,7 @@ export default function Home() {
                 </button>
               </nav>
             </header>
-              <Lede data={data} mode={mode} />
+              <Lede data={data} mode={mode} away={ledeAway || view !== "waves"} />
               {view === "waves" ? (
                 <CurrentCanvas
                   original={data.original}
@@ -191,6 +192,7 @@ export default function Home() {
                   mode={mode}
                   selectedId={selectedId}
                   onSelect={setSelectedId}
+                  onMoved={setLedeAway}
                 />
               ) : view === "grid" ? (
                 <div className="waves-grid">

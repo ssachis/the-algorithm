@@ -99,13 +99,19 @@ export default function CurrentCanvas({
   mode,
   selectedId,
   onSelect,
+  onMoved,
 }: {
   original: Video;
   videos: Video[];
   mode: Mode;
   selectedId: string;
   onSelect: (id: string) => void;
+  /** true once the user pans/zooms/focuses away from the fitted overview; false after Fit */
+  onMoved?: (moved: boolean) => void;
 }) {
+  const movedRef = useRef(onMoved);
+  movedRef.current = onMoved;
+  const moved = (m: boolean) => movedRef.current?.(m);
   const boxRef = useRef<HTMLDivElement>(null);
   const [box, setBox] = useState({ w: 800, h: 600 });
   const [view, setView] = useState({ x: 0, y: 0, k: 0.6 });
@@ -175,6 +181,7 @@ export default function CurrentCanvas({
     const k = Math.min(Math.max((avail / layout.H) * 0.98, 0.42), 1.1);
     const w = layout.W * k;
     setAnimate(true);
+    moved(false);
     setView({ k, x: w <= box.w ? (box.w - w) / 2 : 8, y: RESERVE + (avail - layout.H * k) / 2 });
   }, [box, layout]);
 
@@ -183,6 +190,7 @@ export default function CurrentCanvas({
       const p = layout.pos[id];
       if (!p) return;
       setAnimate(true);
+      moved(true);
       setView({ k, x: box.w / 2 - (p.x + p.w / 2) * k, y: box.h / 2 - (p.y + p.h / 2) * k });
     },
     [box, layout, view.k]
@@ -227,6 +235,7 @@ export default function CurrentCanvas({
 
   const zoomAt = useCallback((factor: number, cx: number, cy: number, anim: boolean) => {
     setAnimate(anim);
+    moved(true);
     setView((v) => {
       const k = Math.min(Math.max(v.k * factor, 0.25), 2.4);
       const f = k / v.k;
@@ -245,6 +254,7 @@ export default function CurrentCanvas({
         zoomAt(Math.exp(-e.deltaY * 0.0018), e.clientX - r.left, e.clientY - r.top, false);
       } else {
         setAnimate(false);
+        movedRef.current?.(true);
         setView((v) => ({ ...v, x: v.x - e.deltaX }));
       }
     };
@@ -263,6 +273,7 @@ export default function CurrentCanvas({
     if (!d.moved && Math.hypot(dx, dy) < 4) return;
     if (!d.moved) (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
     d.moved = true;
+    moved(true);
     setAnimate(false);
     setView((v) => ({ ...v, x: d.vx + dx, y: d.vy + dy }));
   };
