@@ -51,7 +51,9 @@ export default function Verdict({ verdict, original, videos }: { verdict: V; ori
         <div className="card card-pad rise">
           <span className="eyebrow">Why it's moving now · via You.com</span>
           <h4 className="serif">The current</h4>
-          <p className="muted" style={{ margin: 0 }}>{verdict.trend.summary}</p>
+          <p className="muted" style={{ margin: 0 }}>
+            {verdict.trend.summary || "No cited trend context came back for this idea right now."}
+          </p>
           {verdict.trend.sources.length > 0 && (
             <div className="sources">
               {verdict.trend.sources.map((s, i) => (
