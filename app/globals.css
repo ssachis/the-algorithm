@@ -1111,13 +1111,3 @@ html, body { overflow-x: hidden; }
 /* the entrance animation's fill was pinning opacity at 1; let "away" win */
 .cv-lede.away { animation: none; opacity: 0; transform: translateY(-10px); filter: blur(4px); }
 .fs-canvas .waves-grid, .fs-canvas .list { padding-top: 84px; }
-
-/* playful but calm: the selected current flows, Shorts float on the water */
-.cc-path.on { stroke-dasharray: .02 .025 !important; animation: cc-flow-on 1.2s linear infinite !important; stroke-width: 2.2; opacity: .9 !important; }
-@keyframes cc-flow-on { to { stroke-dashoffset: -.09; } }
-.cc-in { animation: cc-rise .75s var(--ease) both, cc-bob 6.5s ease-in-out infinite; }
-.cc-pos:nth-child(3n) .cc-in { animation-duration: .75s, 7.5s; }
-.cc-pos:nth-child(3n+1) .cc-in { animation-duration: .75s, 5.8s; }
-@keyframes cc-bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
-.cc-field { animation-duration: 6s; stroke: rgba(14, 23, 38, .1); }
-@media (prefers-reduced-motion: reduce) { .cc-in { animation: none; } .cc-path.on { animation: none !important; } }
