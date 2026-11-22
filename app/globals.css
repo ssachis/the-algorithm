@@ -952,3 +952,22 @@ html, body { overflow-x: hidden; }
   .hero h1, .hero h1 em, .hero .eyebrow, .hero p.lede, .hero .drop, .hero .linkbtn, .how-step,
   .drop::after, .fs-inspector, .fs-inspector *, .pb-item, .pb-next, .cc-in { animation: none !important; }
 }
+
+/* ---------- immersive layer ---------- */
+/* flashlight that follows the cursor */
+.cc-light {
+  position: absolute; inset: 0; z-index: 0; pointer-events: none; opacity: 0; transition: opacity .6s var(--ease);
+  background: radial-gradient(320px circle at var(--mx, 50%) var(--my, 40%), rgba(255, 255, 255, .85), rgba(220, 230, 245, .35) 40%, transparent 70%);
+}
+.cc-box:hover .cc-light { opacity: 1; }
+/* cards lift toward you */
+.cc-pos:hover { z-index: 6; }
+.cc-card { position: relative; }
+.cc-card:hover { transform: translateY(-8px) scale(1.12); }
+/* selecting a Short sends a ripple out from it */
+.cc-card.selected::after, .cc-card.origin:focus-visible::after {
+  content: ""; position: absolute; inset: -4px; border-radius: 14px; border: 2px solid var(--water);
+  pointer-events: none; animation: ring-out .9s var(--ease) both;
+}
+@keyframes ring-out { from { opacity: .8; transform: scale(1); } to { opacity: 0; transform: scale(1.35); } }
+@media (prefers-reduced-motion: reduce) { .cc-card.selected::after { animation: none; opacity: 0; } .cc-card:hover { transform: none; } }

@@ -266,6 +266,13 @@ export default function CurrentCanvas({
     drag.current = { x: e.clientX, y: e.clientY, vx: view.x, vy: view.y, moved: false };
   };
   const onPointerMove = (e: React.PointerEvent) => {
+    // flashlight: a soft light follows the cursor through the water
+    const el = boxRef.current;
+    if (el) {
+      const r = el.getBoundingClientRect();
+      el.style.setProperty("--mx", `${e.clientX - r.left}px`);
+      el.style.setProperty("--my", `${e.clientY - r.top}px`);
+    }
     const d = drag.current;
     if (!d) return;
     const dx = e.clientX - d.x;
@@ -393,6 +400,7 @@ export default function CurrentCanvas({
         onPointerUp={onPointerUp}
         onPointerLeave={onPointerUp}
       >
+        <div className="cc-light" aria-hidden />
         <div
           className={`cc-world ${zoomClass} ${animate ? "anim" : ""}`}
           style={{
