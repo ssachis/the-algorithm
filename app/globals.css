@@ -236,3 +236,11 @@ button { font: inherit; cursor: pointer; }
 .share { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
 .share-btn { background: var(--deep); }
 .share-btn:hover { background: var(--water); }
+
+/* 404 page (app/not-found.tsx) */
+.nf { min-height: 100vh; display: grid; place-items: center; text-align: center; position: relative; overflow: hidden; padding: 28px; }
+.nf-rings { position: absolute; inset: 0; display: grid; place-items: center; pointer-events: none; }
+.nf-inner { position: relative; z-index: 1; max-width: 560px; }
+.nf-title { font-size: clamp(36px, 7vw, 48px); line-height: 1.05; letter-spacing: -0.015em; margin: 14px 0 12px; }
+.nf-line { color: var(--ink-2); margin: 0 0 32px; }
+.nf-btn { display: inline-block; text-decoration: none; }
