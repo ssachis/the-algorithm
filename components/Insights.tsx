@@ -1,6 +1,7 @@
 "use client";
 import type { Video } from "@/lib/types";
 import { formatCount, formatX, perfLevel, PERF_LABEL } from "@/lib/score";
+import { sharedTerms, versusYours } from "@/lib/insights";
 
 const DAY = 86_400_000;
 const median = (xs: number[]) => {
@@ -62,8 +63,43 @@ export default function Insights({
           .sort((a, b) => (b.outperformance ?? -1) - (a.outperformance ?? -1));
   const peerOps = peers.map((v) => v.outperformance).filter((x): x is number => x != null);
 
+  // --- Selected Short (observed numbers and differences only)
+  const sel = videos.find((v) => v.id === selectedId) ?? null;
+  const selLevel = sel ? perfLevel(sel.outperformance) : "na";
+  const shared = sel ? sharedTerms(original, sel) : null;
+  const sharedCount = shared ? shared.tags.length + shared.words.length : 0;
+  const diffs = sel ? versusYours(original, sel) : [];
+
   return (
     <div className="insights">
+      {sel && (
+        <section className="ins-sec ins-sel rise">
+          <span className="eyebrow">Selected Short</span>
+          <h3 className="serif">
+            {sel.outperformance == null
+              ? "Channel subscribers are hidden, so there is no usual to compare against."
+              : `${PERF_LABEL[selLevel]}: ${formatX(sel.outperformance)} its channel's usual.`}
+          </h3>
+          <p className="ins-p">
+            {formatCount(sel.views)} views, about {Math.round(sel.viewsPerDay).toLocaleString("en-US")} a day.
+            Yours gains about {Math.round(original.viewsPerDay).toLocaleString("en-US")} a day.
+          </p>
+          <p className="ins-p">
+            {sharedCount > 0
+              ? `Shares ${[...(shared?.tags ?? []), ...(shared?.words ?? [])].slice(0, 6).join(", ")} with your Short.`
+              : "Shares no hashtags or title words with your Short."}
+          </p>
+          {diffs.length > 0 && (
+            <ul className="ins-diffs">
+              {diffs.map((d) => (
+                <li key={d}>{d}</li>
+              ))}
+            </ul>
+          )}
+          <p className="ins-note">Observed numbers only. We don&apos;t know why it performed the way it did.</p>
+        </section>
+      )}
+
       <section className="ins-sec rise">
         <span className="eyebrow">Rising or crowded</span>
         <h3 className="serif">{pace}</h3>
