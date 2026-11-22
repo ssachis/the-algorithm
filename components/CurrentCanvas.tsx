@@ -245,6 +245,7 @@ export default function CurrentCanvas({
 
   // ---- auto tour (for demos): your Short → the current → the biggest breakout → back out ----
   const [touring, setTouring] = useState(false);
+  const [hoverId, setHoverId] = useState<string | null>(null);
   const timers = useRef<number[]>([]);
   const fitRef = useRef(fit);
   fitRef.current = fit;
@@ -449,7 +450,6 @@ export default function CurrentCanvas({
         onPointerUp={onPointerUp}
         onPointerLeave={onPointerUp}
       >
-        <div className="cc-light" aria-hidden />
         <div
           className={`cc-world ${zoomClass} ${animate ? "anim" : ""} ${touring ? "tour" : ""}`}
           style={{
@@ -487,7 +487,8 @@ export default function CurrentCanvas({
                 <path
                   key={v.id}
                   d={`M${x1},${y1} C${x1 + dx},${y1} ${x2 - dx},${y2} ${x2},${y2}`}
-                  className={`cc-path ${selectedId === v.id ? "on" : ""} ${pulseId === v.id ? "pulse" : ""}`}
+                  pathLength={1}
+                  className={`cc-path ${selectedId === v.id ? "on" : ""} ${pulseId === v.id ? "pulse" : ""} ${hoverId === v.id ? "hover" : ""}`}
                 />
               );
             })}
@@ -509,6 +510,8 @@ export default function CurrentCanvas({
                   width: p.w,
                 }}
                 onPointerDown={(e) => e.stopPropagation()}
+                onPointerEnter={() => setHoverId(v.id)}
+                onPointerLeave={() => setHoverId((h) => (h === v.id ? null : h))}
               >
                 <div className={`cc-in ${spot === v.id ? "cc-spot" : ""} ${pulseId === v.id ? "cc-pulse" : ""}`} style={{ animationDelay: `${200 + i * 40}ms` }}>
                   <ShortCard

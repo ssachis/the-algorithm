@@ -1095,3 +1095,16 @@ html, body { overflow-x: hidden; }
 .cc-toolbar button.on { color: var(--water); }
 @media (prefers-reduced-motion: reduce) { .cc-world.tour.anim { transition: none; } }
 .cc-world.anim { transition: transform .9s cubic-bezier(.65, 0, .25, 1); }
+
+/* hover: no flashlight — a fine current draws itself from your Short to the one you're looking at */
+.cc-light { display: none !important; }
+.cc-path.hover:not(.on) {
+  opacity: .75 !important; stroke: var(--water); stroke-width: 1.4;
+  stroke-dasharray: 1; stroke-dashoffset: 1; animation: draw-in .7s cubic-bezier(.65, 0, .25, 1) forwards !important;
+}
+@keyframes draw-in { to { stroke-dashoffset: 0; } }
+/* pulse / selected paths use pathLength=1 too */
+.cc-path.pulse { stroke-dasharray: .03 .05 !important; animation: cc-travel2 1.6s linear infinite !important; }
+@keyframes cc-travel2 { to { stroke-dashoffset: -.16; } }
+.cc-card:hover { transform: translateY(-6px) scale(1.06); }
+@media (prefers-reduced-motion: reduce) { .cc-path.hover:not(.on) { animation: none !important; stroke-dashoffset: 0; } }
