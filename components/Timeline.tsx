@@ -1,6 +1,7 @@
 import type { Video } from "@/lib/types";
 
 // When each version was posted (x) and how far it beat its creator's reach (dot size).
+// Uses uniform scaling so dots stay round on narrow screens.
 export default function Timeline({ original, videos }: { original: Video; videos: Video[] }) {
   const all = [original, ...videos];
   const ts = all.map((v) => new Date(v.publishedAt).getTime());
@@ -11,7 +12,7 @@ export default function Timeline({ original, videos }: { original: Video; videos
 
   return (
     <div className="timeline">
-      <svg viewBox="0 0 600 70" preserveAspectRatio="none" aria-label="Posting timeline">
+      <svg viewBox="0 0 600 70" aria-label="Posting timeline">
         <line className="tl-axis" x1={12} x2={588} y1={40} y2={40} />
         {videos.map((v) => (
           <circle

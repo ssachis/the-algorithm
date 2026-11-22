@@ -176,3 +176,54 @@ button { font: inherit; cursor: pointer; }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; }
 }
+
+/* ---------- polish: edge states, skeletons, mobile (issue #6) ---------- */
+
+/* more steps in the verdict fade-in: unknowns (d4) and next experiment (d5) */
+.rise.d4 { animation-delay: .32s; }
+.rise.d5 { animation-delay: .40s; }
+
+/* VideoPanel: stats grid gets a full-width last cell (likes) */
+.stat.full { grid-column: 1 / -1; }
+.thumb-box span { padding: 12px; text-align: center; }
+
+/* Timeline: uniform scaling keeps dots round when the card narrows */
+.timeline svg { height: auto; }
+
+/* skeleton shimmer for verdict cards while loading */
+.skel {
+  display: block; height: 12px; border-radius: 999px; margin: 12px 0;
+  background: linear-gradient(90deg, var(--mist) 25%, #ffffff 50%, var(--mist) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.4s linear infinite;
+}
+.skel-eyebrow { width: 28%; height: 8px; margin-top: 0; }
+.skel-title { width: 60%; height: 20px; margin: 14px 0 16px; }
+.skel-line { width: 100%; }
+.skel-line.short { width: 70%; }
+@keyframes shimmer { from { background-position: 200% 0; } to { background-position: -200% 0; } }
+
+/* empty state: fewer than 3 similar Shorts */
+.empty { max-width: 640px; margin: 20px auto 0; text-align: left; }
+.empty h4 { font-size: 26px; margin: 8px 0 10px; }
+.empty p { margin: 0 0 22px; }
+.empty .btn { display: inline-block; text-decoration: none; }
+
+/* narrow screens (390px phones) */
+@media (max-width: 560px) {
+  .shell { padding: 20px 16px 72px; }
+  .results-head { margin: 28px 0 18px; }
+  .card-pad { padding: 18px; }
+  .map-head { padding: 14px 14px 0; }
+  .map-foot { padding: 0 14px 14px; flex-direction: column; align-items: flex-start; gap: 6px; }
+  .hover-caption { max-width: 100%; white-space: normal; }
+  .legend { flex-wrap: wrap; }
+  .verdict-grid { gap: 14px; }
+  .verdict { margin-top: 14px; }
+  .verdict h4 { font-size: 18px; }
+  .next { padding: 22px; }
+  .next h4 { font-size: 22px; }
+  .panel h3 { font-size: 20px; }
+  .thumb-box { max-height: 180px; }
+  .footer { margin-top: 40px; }
+}
