@@ -412,11 +412,12 @@ export default function CurrentCanvas({
   );
   const [pulse, setPulse] = useState(0);
   useEffect(() => {
-    if (selectedId) return;
     const t = setInterval(() => setPulse((n) => n + 1), 3000);
     return () => clearInterval(t);
-  }, [selectedId]);
-  const pulseId = !selectedId && order.length ? order[pulse % order.length] : null;
+  }, []);
+  // keeps rippling even while a Short is selected (skipping the selected one)
+  const pulseOrder = order.filter((id) => id !== selectedId);
+  const pulseId = pulseOrder.length ? pulseOrder[pulse % pulseOrder.length] : null;
 
   // Arrow keys work anywhere on the page (not only when the canvas has focus).
   const keyRef = useRef(onKeyDown);
