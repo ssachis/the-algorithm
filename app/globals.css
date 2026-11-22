@@ -616,3 +616,12 @@ main.shell:has(.fs) { max-width: none; padding: 0; }
 .cc-pulse { animation: cc-breathe 3s var(--ease) both; }
 @keyframes cc-breathe { 0% { transform: none; } 30% { transform: translateY(-6px) scale(1.05); } 100% { transform: none; } }
 @media (prefers-reduced-motion: reduce) { .cc-field, .cc-path.pulse, .cc-pulse { animation: none !important; } }
+
+/* wordmark */
+.logo { display: inline-flex; align-items: center; gap: .28em; line-height: 1; }
+.logo-mark { height: .95em; width: auto; overflow: visible; }
+.logo-mark path { stroke-dasharray: 120; stroke-dashoffset: 120; animation: logo-draw 1.4s var(--ease) .1s forwards; }
+@keyframes logo-draw { to { stroke-dashoffset: 0; } }
+.logo-word { font-family: var(--font-sans), system-ui, sans-serif; font-weight: 600; letter-spacing: -0.03em; color: var(--deep); }
+@media (prefers-reduced-motion: reduce) { .logo-mark path { animation: none; stroke-dashoffset: 0; } }
+.wordmark .logo, .wordmark .logo-word { color: var(--deep); }

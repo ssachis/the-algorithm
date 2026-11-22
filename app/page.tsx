@@ -9,6 +9,7 @@ import VideoPanel from "@/components/VideoPanel";
 import VideoList, { SORTS, type Sort } from "@/components/VideoList";
 import Verdict from "@/components/Verdict";
 import HowItWorks from "@/components/HowItWorks";
+import Logo from "@/components/Logo";
 import ShareCard from "@/components/ShareCard";
 import { SourceChips, TwinCard } from "@/components/Sources";
 import type { AnalyzeResponse } from "@/lib/types";
@@ -84,14 +85,14 @@ export default function Home() {
       <header className="topbar">
         <a
           href="/"
-          className="wordmark serif"
+          className="wordmark"
           onClick={(e) => {
             e.preventDefault();
             setPhase("idle");
             setData(null);
           }}
         >
-          wave<span>.</span>
+          <Logo />
         </a>
         <span className="eyebrow">Creator intelligence</span>
       </header>
@@ -139,14 +140,14 @@ export default function Home() {
           <header className="fs-top">
             <a
               href="/"
-              className="wordmark serif"
+              className="wordmark"
               onClick={(e) => {
                 e.preventDefault();
                 setPhase("idle");
                 setData(null);
               }}
             >
-              wave<span>.</span>
+              <Logo />
             </a>
             <span className="fs-query">
               {data.query}
