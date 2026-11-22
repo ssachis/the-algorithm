@@ -815,3 +815,4 @@ body { background: var(--bg); }
 }
 @keyframes motes { from { transform: translateY(0); opacity: .35; } to { transform: translateY(-60px); opacity: .1; } }
 @media (prefers-reduced-motion: reduce) { .cc-box::after { animation: none; } }
+html, body { overflow-x: hidden; }

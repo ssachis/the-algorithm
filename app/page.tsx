@@ -36,7 +36,7 @@ export default function Home() {
   const [sort, setSort] = useState<Sort>("similar");
   const [selectedId, setSelectedId] = useState<string>("");
   const [showWhy, setShowWhy] = useState(false);
-  const [hidePlaybook, setHidePlaybook] = useState(false);
+  const [hidePlaybook, setHidePlaybook] = useState(true);
   const [line, setLine] = useState(0);
 
   useEffect(() => {
@@ -60,6 +60,7 @@ export default function Home() {
       const d = json as AnalyzeResponse;
       setData(d);
       setSelectedId(""); // nothing selected by default: the canvas uses the full width
+      setHidePlaybook(true);
       setShowWhy(false);
       setMode("views");
       setView("waves");
@@ -157,6 +158,16 @@ export default function Home() {
               </a>
               <span className="fs-query" />
               <nav className="fs-actions">
+                <button
+                  className="ghost"
+                  aria-pressed={!hidePlaybook && !selected}
+                  onClick={() => {
+                    setSelectedId("");
+                    setHidePlaybook((v) => !v);
+                  }}
+                >
+                  Try this next
+                </button>
                 <button className="ghost" aria-pressed={showWhy} onClick={() => setShowWhy((v) => !v)}>
                   Why
                 </button>
