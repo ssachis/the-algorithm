@@ -232,3 +232,7 @@ button { font: inherit; cursor: pointer; }
 .bucket-tag.unknown { border: 1px dashed var(--sage); color: var(--ink-3); }
 .trend { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); gap: 20px; margin-top: 20px; }
 @media (max-width: 880px) { .trend { grid-template-columns: 1fr; } }
+/* share your ripple (components/ShareCard.tsx) */
+.share { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.share-btn { background: var(--deep); }
+.share-btn:hover { background: var(--water); }
