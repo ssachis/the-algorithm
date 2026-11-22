@@ -451,7 +451,7 @@ main.shell:has(.fs) { max-width: none; padding: 0; }
 /* #33: source chips over the canvas, and "Meet your twin" card */
 .fs-canvas { position: relative; }
 .src-chips {
-  position: absolute; left: 28px; bottom: 14px; z-index: 2;
+  position: absolute; left: 28px; bottom: 60px; z-index: 2;
   display: flex; flex-wrap: wrap; align-items: center; gap: 6px; max-width: calc(100% - 56px);
   pointer-events: none;
 }
