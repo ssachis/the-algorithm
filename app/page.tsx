@@ -7,6 +7,8 @@ import ModeToggle from "@/components/ModeToggle";
 import VideoPanel from "@/components/VideoPanel";
 import VideoList, { SORTS, type Sort } from "@/components/VideoList";
 import Verdict from "@/components/Verdict";
+import HowItWorks from "@/components/HowItWorks";
+import ShareCard from "@/components/ShareCard";
 import type { AnalyzeResponse } from "@/lib/types";
 
 type Phase = "idle" | "loading" | "done";
@@ -106,6 +108,7 @@ export default function Home() {
           </div>
         </section>
       )}
+      {phase === "idle" && <HowItWorks />}
 
       {phase === "loading" && (
         <section className="loading">
@@ -130,6 +133,7 @@ export default function Home() {
                 <span className="faint">Here&apos;s where it travelled.</span>
               </h2>
             </div>
+            <ShareCard data={data} mode={mode} />
           </div>
 
           <div className="grid">
