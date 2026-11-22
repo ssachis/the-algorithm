@@ -1070,3 +1070,4 @@ html, body { overflow-x: hidden; }
 .wm-drift:not(.wm-main) path { filter: drop-shadow(0 0 3px rgba(185, 195, 209, .7)); }
 @media (prefers-reduced-motion: reduce) { .wm-main path:first-child { animation: none; } }
 .hero-rings svg { -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 18%, #000 82%, transparent 100%); mask-image: linear-gradient(90deg, transparent 0%, #000 18%, #000 82%, transparent 100%); }
+.hero-rings { -webkit-mask-image: linear-gradient(90deg, transparent 4%, #000 22%, #000 78%, transparent 96%); mask-image: linear-gradient(90deg, transparent 4%, #000 22%, #000 78%, transparent 96%); }
