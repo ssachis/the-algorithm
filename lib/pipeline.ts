@@ -5,7 +5,7 @@ import { getChannels, getRecentUploadIds, getVideos, parseVideoId, quota, search
 import { buildVerdict, elsewhere } from "./youcom";
 import { cached, readDemo } from "./cache";
 
-const MAX_SIMILAR = 20;
+const MAX_SIMILAR = 14;
 const MAX_SHORT_SEC = 180;
 
 function toVideo(r: RawVideo, subs: number | null, ref: Pick<Video, "title" | "hashtags" | "durationSec"> | null): Video {

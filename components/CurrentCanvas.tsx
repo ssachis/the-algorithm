@@ -15,23 +15,23 @@ const LABEL_W = 150;
 const ORIGIN_X = LABEL_W + 20;
 const FIRST_X = ORIGIN_X + CARD_W + 120;
 const SPREAD = 820;
-const GAP = 18;
+const GAP = 30;
 const TOP = 24;
 
 type Lane = { key: string; label: string; test: (v: Video) => boolean };
 
 const REACH_LANES: Lane[] = [
-  { key: "outlier", label: "Outlier · over 3×", test: (v) => perfLevel(v.outperformance) === "outlier" },
-  { key: "strong", label: "Strong · 1.5–3×", test: (v) => perfLevel(v.outperformance) === "strong" },
-  { key: "around", label: "Around usual", test: (v) => perfLevel(v.outperformance) === "around" },
-  { key: "below", label: "Below usual · under 0.5×", test: (v) => perfLevel(v.outperformance) === "below" },
-  { key: "na", label: "No baseline (subs hidden)", test: (v) => v.outperformance == null },
+  { key: "outlier", label: "Outlier", test: (v) => perfLevel(v.outperformance) === "outlier" },
+  { key: "strong", label: "Strong", test: (v) => perfLevel(v.outperformance) === "strong" },
+  { key: "around", label: "Usual", test: (v) => perfLevel(v.outperformance) === "around" },
+  { key: "below", label: "Below", test: (v) => perfLevel(v.outperformance) === "below" },
+  { key: "na", label: "Unknown", test: (v) => v.outperformance == null },
 ];
 const VIEW_LANES: Lane[] = [
-  { key: "1m", label: "1M+ views", test: (v) => v.views >= 1_000_000 },
-  { key: "100k", label: "100K–1M views", test: (v) => v.views >= 100_000 && v.views < 1_000_000 },
-  { key: "10k", label: "10K–100K views", test: (v) => v.views >= 10_000 && v.views < 100_000 },
-  { key: "lt10k", label: "Under 10K views", test: (v) => v.views < 10_000 },
+  { key: "1m", label: "1M+", test: (v) => v.views >= 1_000_000 },
+  { key: "100k", label: "100K+", test: (v) => v.views >= 100_000 && v.views < 1_000_000 },
+  { key: "10k", label: "10K+", test: (v) => v.views >= 10_000 && v.views < 100_000 },
+  { key: "lt10k", label: "Under 10K", test: (v) => v.views < 10_000 },
 ];
 
 const ago = (iso: string) => {
@@ -46,6 +46,7 @@ export function ShortCard({
   dim,
   isOrigin,
   compare,
+  minimal,
   onClick,
 }: {
   v: Video;
@@ -54,6 +55,7 @@ export function ShortCard({
   dim?: boolean;
   isOrigin?: boolean;
   compare?: boolean;
+  minimal?: boolean;
   onClick: (e: React.MouseEvent) => void;
 }) {
   const lvl = perfLevel(v.outperformance);
@@ -67,20 +69,23 @@ export function ShortCard({
     >
       <div className="cc-thumb">
         {v.thumbnail ? <img src={v.thumbnail} alt="" loading="lazy" draggable={false} /> : <div className="cc-ph" />}
-        {isOrigin && <span className="cc-badge you">your Short</span>}
-        {!isOrigin && mode === "reach" && v.outperformance != null && (
-          <span className={`cc-badge ${lvl}`}>{formatX(v.outperformance)}</span>
+        {isOrigin && <span className="cc-badge you">yours</span>}
+        {!isOrigin && breakout && <span className={`cc-badge ${lvl}`}>{formatX(v.outperformance)}</span>}
+        {minimal && (
+          <span className="cc-tip">
+            <b>{v.channelTitle}</b>
+            {formatCount(v.views)} views · {ago(v.publishedAt)}
+          </span>
         )}
-        {!isOrigin && mode === "views" && <span className="cc-badge plain">{formatCount(v.views)}</span>}
       </div>
-      <div className="cc-meta">
+      {!minimal && <div className="cc-meta">
         <div className="cc-creator">{v.channelTitle}</div>
         <div className="cc-title">{title}</div>
         <div className="cc-line">
           {formatCount(v.views)} · {ago(v.publishedAt)}
           {!isOrigin && ` · ${Math.round(v.similarity * 100)}%`}
         </div>
-      </div>
+      </div>}
     </button>
   );
 }
@@ -382,6 +387,7 @@ export default function CurrentCanvas({
                     dim={!!focused && selectedId !== v.id && v.id !== original.id}
                     isOrigin={v.id === original.id}
                     compare={compareId === v.id}
+                    minimal
                     onClick={(e) => click(v.id, e)}
                   />
                 </div>
@@ -403,9 +409,8 @@ export default function CurrentCanvas({
           ))}
         </div>
 
-        <div className="cc-axis" aria-hidden>
-          <span>← more similar</span>
-          <span>less similar →</span>
+        <div className="cc-hint" aria-hidden>
+          {mode === "reach" ? "Higher = beat their usual views" : "Higher = more views"} · further right = less similar
         </div>
       </div>
 
@@ -414,14 +419,7 @@ export default function CurrentCanvas({
         <span className="cc-pct">{Math.round(view.k * 100)}%</span>
         <button onClick={() => zoomAt(1.25, box.w / 2, box.h / 2, true)} aria-label="Zoom in">+</button>
         <span className="cc-sep" />
-        <button onClick={fit}>Fit</button>
-        <button onClick={() => { onSelect(original.id); focusOn(original.id, 1.1); }}>Reset</button>
-      </div>
-      <div className="cc-legend">
-        {mode === "reach"
-          ? "Lanes = views vs. each creator's usual (median of their recent Shorts). Rough, not a ranking signal. Glow = breakout."
-          : "Lanes = raw public views. Switch to “Remove creator size” to compare fairly."}{" "}
-        Drag to pan · scroll to zoom. Shift-click a second Short to compare.
+        <button onClick={fit} aria-label="Fit to screen" title="Fit">⤢</button>
       </div>
       {compareId && (
         <CompareTray
