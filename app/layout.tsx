@@ -9,6 +9,16 @@ export const metadata: Metadata = {
   title: "Wave — Same idea. Different outcomes.",
   description:
     "Paste a YouTube Short, see similar Shorts ripple out from yours, and learn why some took off.",
+  openGraph: {
+    title: "Wave — Same idea. Different outcomes.",
+    description: "Paste a YouTube Short, see similar Shorts ripple out from yours, and learn why some took off.",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Wave — Same idea. Different outcomes.",
+    description: "Paste a YouTube Short, see similar Shorts ripple out from yours, and learn why some took off.",
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
