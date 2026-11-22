@@ -30,7 +30,7 @@ export default function VideoPanel({ video, original }: { video: Video; original
       </div>
 
       <div className="stats">
-        <div className="stat hero-stat">
+        <div className="stat hero-stat" title={perfDefinition(video)}>
           {/* Hidden subscriber counts show as "hidden", never as a dash or a crash. */}
           <div className="v">{video.outperformance == null ? "hidden" : formatX(video.outperformance)}</div>
           <div className="k">{perfUnit(video)}</div>
@@ -48,8 +48,6 @@ export default function VideoPanel({ video, original }: { video: Video; original
           <div className="k">views / day</div>
         </div>
       </div>
-
-      <div className="definition">{perfDefinition(video)}</div>
 
       {why && (
         <div className="why">

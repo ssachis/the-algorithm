@@ -34,11 +34,6 @@ export default function Lede({ data, mode }: { data: AnalyzeResponse; mode: Mode
           <>Same idea. Different outcomes.</>
         )}
       </h1>
-      <p className="lede-sub">
-        {mode === "reach"
-          ? "Higher means it beat its creator's usual views. Bigger means more views."
-          : "Flip to Remove creator size to see who really broke out."}
-      </p>
     </div>
   );
 }

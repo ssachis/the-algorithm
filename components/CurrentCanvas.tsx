@@ -478,7 +478,7 @@ export default function CurrentCanvas({
         </div>
 
         <div className="cc-hint" aria-hidden>
-          {mode === "reach" ? "Higher = beat their usual views" : "Higher = more views"} · further right = less similar
+          {mode === "reach" ? "↑ beat their usual" : "↑ more views"} · → less similar
         </div>
       </div>
 

@@ -53,7 +53,7 @@ export function buildPlaybook(data: AnalyzeResponse): Playbook {
     const when =
       evening / n >= 0.6 ? "in the late afternoon or evening" : morning / n >= 0.6 ? "in the morning" : null;
     const days = weekend / n >= 0.6 ? "on weekends" : weekend === 0 ? "on weekdays" : null;
-    if (when || days) timing = `${parts.length >= 4 ? "Most" : "These"} breakouts went up ${[days, when].filter(Boolean).join(", ")} (ET).`;
+    if (when || days) timing = `Posted ${[days, when].filter(Boolean).join(", ").replace("in the late afternoon or evening", "in the evening")} (ET)`;
   }
 
   const mine = new Set(original.hashtags);

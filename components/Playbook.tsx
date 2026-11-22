@@ -21,20 +21,19 @@ export default function Playbook({
   return (
     <div className="pb">
       <span className="eyebrow">Your playbook</span>
-      <h3 className="serif pb-title">What the breakouts did that you can try.</h3>
-      <p className="pb-basis">{pb.basis}</p>
+      <h3 className="serif pb-title">Try this next.</h3>
 
       {pb.hooks.length > 0 && (
         <section className="pb-item">
           <span className="pb-n">{num()}</span>
           <div>
-            <h4>Borrow the hook</h4>
+            <h4>Hooks that worked</h4>
             <ul className="pb-hooks">
               {pb.hooks.map((h) => (
                 <li key={h.v.id}>
                   <button onClick={() => onPick(h.v.id)}>
                     <span className="serif">&ldquo;{h.text}&rdquo;</span>
-                    <small>{formatX(h.v.outperformance)} their usual · {h.v.channelTitle}</small>
+                    <small>{formatX(h.v.outperformance)}</small>
                   </button>
                 </li>
               ))}
@@ -47,10 +46,9 @@ export default function Playbook({
         <section className="pb-item">
           <span className="pb-n">{num()}</span>
           <div>
-            <h4>{diff > 0 ? "Give it more room" : "Get to the point faster"}</h4>
+            <h4>Length</h4>
             <p>
-              Breakouts run about <b>{pb.length.theirs}s</b>. Yours is {pb.length.yours}s, so try{" "}
-              {diff > 0 ? `adding ~${diff}s of payoff` : `cutting ~${-diff}s`}.
+              <b>{pb.length.theirs}s</b> vs your {pb.length.yours}s
             </p>
           </div>
         </section>
@@ -60,7 +58,7 @@ export default function Playbook({
         <section className="pb-item">
           <span className="pb-n">{num()}</span>
           <div>
-            <h4>Post when they posted</h4>
+            <h4>Timing</h4>
             <p>{pb.timing}</p>
           </div>
         </section>
@@ -70,7 +68,7 @@ export default function Playbook({
         <section className="pb-item">
           <span className="pb-n">{num()}</span>
           <div>
-            <h4>Tags they share that you skipped</h4>
+            <h4>Tags you skipped</h4>
             <p className="pb-tags">{pb.hashtags.map((h) => <span key={h}>{h}</span>)}</p>
           </div>
         </section>
@@ -78,12 +76,11 @@ export default function Playbook({
 
       {pb.experiment && (
         <section className="pb-next">
-          <span className="eyebrow">Your next Short</span>
+          <span className="eyebrow">Next Short</span>
           <p className="serif">{pb.experiment}</p>
         </section>
       )}
 
-      <p className="pb-foot">Patterns, not guarantees: public numbers can&apos;t see retention or impressions.</p>
       <button className="fs-close" onClick={onClose} aria-label="Hide playbook">×</button>
     </div>
   );
