@@ -1140,11 +1140,3 @@ html, body { overflow-x: hidden; }
 /* lane waves stay, but quieter so the currents lead */
 .cc-paths .cc-field { stroke: rgba(36, 87, 214, .12) !important; stroke-width: 1.4; }
 .cc-paths .cc-field:nth-of-type(2n) { stroke: rgba(140, 155, 178, .22) !important; }
-
-/* a single quiet current: draws in from your Short to the one you hover or select */
-.cc-paths .cc-current {
-  fill: none; stroke: var(--water); stroke-width: 1.2; opacity: .55;
-  stroke-dasharray: 1; stroke-dashoffset: 1; animation: draw-in .7s cubic-bezier(.65, 0, .25, 1) forwards;
-}
-.cc-paths .cc-current.on { stroke-width: 1.6; opacity: .8; }
-@media (prefers-reduced-motion: reduce) { .cc-paths .cc-current { animation: none; stroke-dashoffset: 0; } }

@@ -475,26 +475,6 @@ export default function CurrentCanvas({
                 ).join(" ");
               return <path key={`field-${l.key}`} d={d} className="cc-field" style={{ animationDelay: `${i * -1.3}s` }} />;
             })}
-            {/* one quiet current, only to the Short you hover or select */}
-            {[...new Set([selectedId, hoverId])]
-              .filter((id): id is string => !!id && id !== original.id && !!layout.pos[id])
-              .map((id) => {
-                const o = layout.pos[original.id];
-                const p = layout.pos[id];
-                const x1 = o.x + o.w;
-                const y1 = o.y + o.h / 2;
-                const x2 = p.x;
-                const y2 = p.y + p.h / 2;
-                const dx = Math.max((x2 - x1) * 0.5, 40);
-                return (
-                  <path
-                    key={`cur-${id}`}
-                    d={`M${x1},${y1} C${x1 + dx},${y1} ${x2 - dx},${y2} ${x2},${y2}`}
-                    pathLength={1}
-                    className={`cc-current ${selectedId === id ? "on" : ""}`}
-                  />
-                );
-              })}
             <path
               className="cc-reveal"
               d={`M0,${layout.H / 2} ${Array.from({ length: Math.ceil(layout.W / 80) }, (_, i) => `Q${i * 80 + 40},${layout.H / 2 + (i % 2 ? 14 : -14)} ${i * 80 + 80},${layout.H / 2}`).join(" ")}`}
