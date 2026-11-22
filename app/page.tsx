@@ -11,6 +11,7 @@ import Verdict from "@/components/Verdict";
 import HowItWorks from "@/components/HowItWorks";
 import Logo from "@/components/Logo";
 import Lede from "@/components/Lede";
+import Playbook from "@/components/Playbook";
 import ShareCard from "@/components/ShareCard";
 import { TwinCard } from "@/components/Sources";
 import type { AnalyzeResponse } from "@/lib/types";
@@ -35,6 +36,7 @@ export default function Home() {
   const [sort, setSort] = useState<Sort>("similar");
   const [selectedId, setSelectedId] = useState<string>("");
   const [showWhy, setShowWhy] = useState(false);
+  const [hidePlaybook, setHidePlaybook] = useState(false);
   const [line, setLine] = useState(0);
 
   useEffect(() => {
@@ -139,7 +141,7 @@ export default function Home() {
       {phase === "done" && data && (
         <div className="fs">
 
-          <div className={`fs-body ${selected ? "with-inspector" : ""}`}>
+          <div className={`fs-body ${selected || !hidePlaybook ? "with-inspector" : ""}`}>
             <div className="fs-canvas">
             <header className="fs-top">
               <a
@@ -220,6 +222,11 @@ export default function Home() {
               </div>
             </div>
 
+            {!selected && !hidePlaybook && (
+              <aside className="fs-inspector" aria-label="Your playbook">
+                <Playbook data={data} onPick={setSelectedId} onClose={() => setHidePlaybook(true)} />
+              </aside>
+            )}
             {selected && (
               <aside className="fs-inspector" aria-label="Selected Short">
                 <button className="fs-close" onClick={() => setSelectedId("")} aria-label="Close inspector">

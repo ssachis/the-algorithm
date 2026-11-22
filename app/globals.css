@@ -765,3 +765,25 @@ body { background: var(--bg); }
 .fs-inspector { background: var(--surface); border-left-color: var(--line); }
 .next { background: radial-gradient(120% 140% at 0% 0%, #2a8ad8 0%, #124a7a 55%, #0b2236 100%) !important; }
 @media (prefers-reduced-motion: reduce) { .cc-box::before { animation: none; } }
+
+/* ---------- Your playbook (default right column) ---------- */
+.pb { position: relative; animation: rise .6s var(--ease) both; }
+.pb .fs-close { top: -10px; right: -12px; }
+.pb-title { font-size: 30px; line-height: 1.05; letter-spacing: -0.015em; margin: 8px 0 6px; color: var(--ink); }
+.pb-basis { font-size: 12px; color: var(--ink-3); margin: 0 0 18px; }
+.pb-item { display: grid; grid-template-columns: 34px 1fr; gap: 6px; padding: 14px 0; border-top: 1px solid var(--line); }
+.pb-n { font-family: var(--font-serif), Georgia, serif; font-size: 20px; color: var(--water); line-height: 1.2; }
+.pb-item h4 { margin: 0 0 6px; font-size: 14px; font-weight: 600; color: var(--ink); }
+.pb-item p { margin: 0; font-size: 13px; color: var(--ink-2); }
+.pb-item b { color: var(--ink); }
+.pb-hooks { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+.pb-hooks button { width: 100%; text-align: left; background: var(--mist); border: 0; border-radius: 10px; padding: 9px 12px; transition: background .2s, transform .2s var(--ease); }
+.pb-hooks button:hover { background: #d5eaee; transform: translateX(3px); }
+.pb-hooks .serif { display: block; font-size: 17px; line-height: 1.2; color: var(--ink); }
+.pb-hooks small { display: block; margin-top: 3px; font-size: 11px; color: var(--ink-3); }
+.pb-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+.pb-tags span { font-size: 12px; padding: 3px 9px; border-radius: 999px; background: var(--mist); color: var(--ink); }
+.pb-next { margin-top: 8px; padding: 18px; border-radius: 14px; color: #fff; background: radial-gradient(120% 140% at 0% 0%, #2a8ad8 0%, #124a7a 55%, #0b2236 100%); }
+.pb-next .eyebrow { color: rgba(255,255,255,.7); }
+.pb-next p { margin: 8px 0 0; font-size: 19px; line-height: 1.25; }
+.pb-foot { font-size: 11px; color: var(--ink-3); margin: 14px 0 0; }
