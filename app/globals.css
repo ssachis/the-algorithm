@@ -1108,3 +1108,6 @@ html, body { overflow-x: hidden; }
 @keyframes cc-travel2 { to { stroke-dashoffset: -.16; } }
 .cc-card:hover { transform: translateY(-6px) scale(1.06); }
 @media (prefers-reduced-motion: reduce) { .cc-path.hover:not(.on) { animation: none !important; stroke-dashoffset: 0; } }
+/* the entrance animation's fill was pinning opacity at 1; let "away" win */
+.cv-lede.away { animation: none; opacity: 0; transform: translateY(-10px); filter: blur(4px); }
+.fs-canvas .waves-grid, .fs-canvas .list { padding-top: 84px; }

@@ -184,7 +184,7 @@ export default function Home() {
                 </button>
               </nav>
             </header>
-              <Lede data={data} mode={mode} away={ledeAway || view !== "waves"} />
+              {view === "waves" && <Lede data={data} mode={mode} away={ledeAway} />}
               {view === "waves" ? (
                 <CurrentCanvas
                   original={data.original}
