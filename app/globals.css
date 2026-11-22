@@ -182,7 +182,7 @@ button { font: inherit; cursor: pointer; }
 .chips { display: flex; gap: 6px; flex-wrap: wrap; }
 .chip {
   border: 1px solid var(--line); background: var(--surface); color: var(--ink-2);
-  padding: 7px 14px; border-radius: 999px; font-size: 13px; transition: all .25s var(--ease);
+  padding: 7px 14px; border-radius: 999px; font-size: 13px; white-space: nowrap; transition: all .25s var(--ease);
 }
 .chip:hover { border-color: var(--sage); color: var(--ink); }
 .chip[aria-pressed="true"] { background: var(--deep); border-color: var(--deep); color: #fff; }
@@ -225,10 +225,10 @@ button { font: inherit; cursor: pointer; }
 /* three buckets */
 .buckets { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
 @media (max-width: 880px) { .buckets { grid-template-columns: 1fr; } }
-.bucket-tag { display: inline-block; font-size: 11px; letter-spacing: .12em; text-transform: uppercase; padding: 3px 10px; border-radius: 999px; margin-bottom: 10px; }
+.bucket-tag { display: inline-block; font-size: 11px; line-height: 16px; letter-spacing: .12em; text-transform: uppercase; padding: 3px 10px; border: 1px solid transparent; border-radius: 999px; margin-bottom: 10px; vertical-align: top; }
 .bucket-tag.observed { background: var(--deep); color: #fff; }
 .bucket-tag.hypothesis { background: var(--mist); color: var(--ink-2); }
-.bucket-tag.unknown { border: 1px dashed var(--sage); color: var(--ink-3); }
+.bucket-tag.unknown { border-style: dashed; border-color: var(--sage); color: var(--ink-3); }
 .trend { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); gap: 20px; margin-top: 20px; }
 @media (max-width: 880px) { .trend { grid-template-columns: 1fr; } }
 
@@ -1159,3 +1159,20 @@ html, body { overflow-x: hidden; }
 .ins-n { font-size: 12px; color: var(--ink-2); font-variant-numeric: tabular-nums; }
 .ins-m { font-size: 11px; color: var(--ink-3); letter-spacing: .06em; text-transform: uppercase; }
 .fs-canvas .insights .list { height: auto; overflow: visible; padding: 4px 0 0; }
+
+/* Insights: selected Short summary; keep dock labels on one line */
+.ins-diffs { margin: 10px 0 0; padding-left: 18px; color: var(--ink-2); font-size: 14px; line-height: 1.6; }
+.dock-seg button { white-space: nowrap; }
+
+/* Why sheet: scale the comparison to fit the screen without scrolling */
+.sheet { max-height: 92vh; padding: clamp(14px, 2.4vh, 24px) 24px 6px; }
+.sheet .verdict { margin-top: 0; }
+.sheet .results-head { margin-top: 0 !important; }
+.sheet .results-head h2 { font-size: clamp(22px, 3.6vh, 34px); margin: 2px 0 0; }
+.sheet .buckets { gap: 12px; }
+.sheet .buckets .card-pad { padding: clamp(12px, 1.8vh, 18px); }
+.sheet .bucket-tag { margin-bottom: 6px; font-size: 10px; }
+.sheet .verdict h4 { font-size: clamp(15px, 2.2vh, 19px); margin: 0 0 6px; }
+.sheet .buckets li { font-size: clamp(12px, 1.6vh, 14px); line-height: 1.45; margin-bottom: 4px; }
+.sheet .trend { margin-top: 12px; }
+.sheet .twin-card { margin-bottom: 6px; padding: 12px 16px; }

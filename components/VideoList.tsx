@@ -5,8 +5,8 @@ import { formatCount, perfLevel, PERF_LABEL } from "@/lib/score";
 export type Sort = "similar" | "relative" | "newest";
 
 export const SORTS: { id: Sort; label: string }[] = [
-  { id: "similar", label: "Most similar" },
-  { id: "relative", label: "Highest relative performance" },
+  { id: "similar", label: "Similar" },
+  { id: "relative", label: "Performance" },
   { id: "newest", label: "Newest" },
 ];
 
