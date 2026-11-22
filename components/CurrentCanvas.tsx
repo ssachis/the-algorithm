@@ -229,7 +229,7 @@ export default function CurrentCanvas({
   }, [mode]);
   // Re-fit when the canvas is resized (inspector opens or closes, window resizes).
   useEffect(() => {
-    if (fitted.current && box.w > 0) fit();
+    if (fitted.current && box.w > 0 && !touring) fit();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [box.w, box.h]);
 
@@ -243,12 +243,60 @@ export default function CurrentCanvas({
     });
   }, []);
 
+  // ---- auto tour (for demos): your Short → the current → the biggest breakout → back out ----
+  const [touring, setTouring] = useState(false);
+  const timers = useRef<number[]>([]);
+  const fitRef = useRef(fit);
+  fitRef.current = fit;
+  const focusRef = useRef(focusOn);
+  focusRef.current = focusOn;
+  const stopTour = useCallback(() => {
+    timers.current.forEach((t) => clearTimeout(t));
+    timers.current = [];
+    setTouring(false);
+  }, []);
+  const startTour = useCallback(() => {
+    timers.current.forEach((t) => clearTimeout(t));
+    const top = videos
+      .slice()
+      .sort((a, b) => (b.outperformance ?? 0) - (a.outperformance ?? 0) || b.views - a.views)[0];
+    setTouring(true);
+    const steps: [number, () => void][] = [
+      [200, () => focusRef.current(original.id, 0.95)],
+      [2400, () => top && focusRef.current(top.id, 1.05)],
+      [4300, () => top && onSelect(top.id)],
+      [7800, () => {
+        setTouring(false);
+        timers.current = [];
+        fitRef.current();
+      }],
+    ];
+    timers.current = steps.map(([t, f]) => window.setTimeout(f, t));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [videos, original.id]);
+  // play once per result set, after the Shorts have risen in
+  useEffect(() => {
+    const t = window.setTimeout(startTour, 1800);
+    return () => {
+      clearTimeout(t);
+      timers.current.forEach((x) => clearTimeout(x));
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [original.id]);
+  useEffect(() => {
+    if (!touring) return;
+    const stop = () => stopTour();
+    window.addEventListener("keydown", stop, { once: true });
+    return () => window.removeEventListener("keydown", stop);
+  }, [touring, stopTour]);
+
   // wheel zoom around pointer (non-passive so the page doesn't scroll)
   useEffect(() => {
     const el = boxRef.current;
     if (!el) return;
     const onWheel = (e: WheelEvent) => {
       e.preventDefault();
+      stopTour();
       const r = el.getBoundingClientRect();
       if (e.ctrlKey || Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
         zoomAt(Math.exp(-e.deltaY * 0.0018), e.clientX - r.left, e.clientY - r.top, false);
@@ -260,9 +308,10 @@ export default function CurrentCanvas({
     };
     el.addEventListener("wheel", onWheel, { passive: false });
     return () => el.removeEventListener("wheel", onWheel);
-  }, [zoomAt]);
+  }, [zoomAt, stopTour]);
 
   const onPointerDown = (e: React.PointerEvent) => {
+    if (touring) stopTour();
     drag.current = { x: e.clientX, y: e.clientY, vx: view.x, vy: view.y, moved: false };
   };
   const onPointerMove = (e: React.PointerEvent) => {
@@ -402,7 +451,7 @@ export default function CurrentCanvas({
       >
         <div className="cc-light" aria-hidden />
         <div
-          className={`cc-world ${zoomClass} ${animate ? "anim" : ""}`}
+          className={`cc-world ${zoomClass} ${animate ? "anim" : ""} ${touring ? "tour" : ""}`}
           style={{
             width: layout.W,
             height: layout.H,
@@ -499,6 +548,7 @@ export default function CurrentCanvas({
         <button onClick={() => zoomAt(1.25, box.w / 2, box.h / 2, true)} aria-label="Zoom in">+</button>
         <span className="cc-sep" />
         <button onClick={fit} aria-label="Fit to screen" title="Fit">⤢</button>
+        <button onClick={startTour} aria-label="Play tour" title="Play tour" className={touring ? "on" : ""}>▶</button>
       </div>
       {compareId && (
         <CompareTray

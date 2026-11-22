@@ -1089,3 +1089,8 @@ html, body { overflow-x: hidden; }
 .drop .btn-icon:not(:disabled):hover svg { transform: scale(1.12) rotate(-8deg); }
 .drop .btn-icon:disabled { background: #e8ecf2; color: #8a94a4; }
 .drop { padding: 5px 5px 5px 22px; }
+
+/* auto tour: a slow, cinematic camera */
+.cc-world.tour.anim { transition: transform 1.9s cubic-bezier(.65, 0, .25, 1); }
+.cc-toolbar button.on { color: var(--water); }
+@media (prefers-reduced-motion: reduce) { .cc-world.tour.anim { transition: none; } }
