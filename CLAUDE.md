@@ -53,3 +53,8 @@ lib/mock-data.ts          fictional demo data in the exact AnalyzeResponse shape
 ## You.com
 - Search the trend/idea for **why it's moving now** → `verdict.trend.summary` + `sources`.
 - Generate the verdict (patterns, timing, unknowns, next experiment) grounded in our computed numbers.
+
+## Before the demo
+- **Check keys:** open `http://localhost:3000/api/health` → youtube `ok`, youcom `ok (n sources)`.
+- **Preload demo Shorts:** open `http://localhost:3000/api/preload?url=<shorts link>` for each demo Short,
+  then commit the new `demo/<id>.json` files. They are served instantly with zero quota, even offline.
