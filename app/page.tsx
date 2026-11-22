@@ -233,7 +233,7 @@ export default function Home() {
               <button className="fs-close" onClick={() => setShowWhy(false)} aria-label="Close">
                 ×
               </button>
-              <TwinCard twins={data.elsewhere} />
+              <TwinCard twins={data.elsewhere} live={data.source !== "mock"} />
               <Verdict verdict={data.verdict} original={data.original} videos={data.similar} />
               <p className="footer">
                 Public metrics only. We never claim to know YouTube&apos;s internal ranking. Trend context powered by

@@ -7,8 +7,8 @@ export function SourceChips({ sources }: { sources: Source[] }) {
   return (
     <div className="src-chips" aria-label="Trend sources">
       <span className="src-label">via You.com</span>
-      {shown.map((s) => (
-        <a key={s.url} className="src-chip" href={s.url} target="_blank" rel="noreferrer" title={s.title}>
+      {shown.map((s, i) => (
+        <a key={`${i}-${s.url}`} className="src-chip" href={s.url} target="_blank" rel="noreferrer" title={s.title}>
           {s.title || "Source"}
         </a>
       ))}
@@ -17,16 +17,16 @@ export function SourceChips({ sources }: { sources: Source[] }) {
 }
 
 // "Meet your twin": the same idea showing up on other platforms. Hidden when empty.
-export function TwinCard({ twins }: { twins?: Twin[] }) {
+export function TwinCard({ twins, live = true }: { twins?: Twin[]; live?: boolean }) {
   const items = (twins ?? []).slice(0, 4);
   if (items.length === 0) return null;
   return (
     <section className="twin-card" aria-label="Meet your twin">
       <h3 className="serif twin-title">Meet your twin</h3>
-      <p className="twin-sub">Same idea, other platforms. Live from You.com.</p>
+      <p className="twin-sub">Same idea, other platforms. {live ? "Live from You.com." : "Example data, not live."}</p>
       <ul className="twin-list">
-        {items.map((t) => (
-          <li key={t.url}>
+        {items.map((t, i) => (
+          <li key={`${i}-${t.url}`}>
             <span className="twin-tag">{t.platform}</span>
             <a href={t.url} target="_blank" rel="noreferrer" className="twin-link">
               {t.title}

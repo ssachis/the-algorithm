@@ -11,7 +11,7 @@ leave with one concrete experiment for your next post.
 
 Built at **Creator Economy Hack NYC** (You.com × localhost:nyc × GenZtea).
 
-**Live demo:** [TBD: live link]  ·  **Pitch script:** [docs/PITCH.md](docs/PITCH.md)  ·  **Demo post:** [docs/POST.md](docs/POST.md)
+**Live demo:** [the-algorithm-ashy.vercel.app](https://the-algorithm-ashy.vercel.app)  ·  **Pitch script:** [docs/PITCH.md](docs/PITCH.md)  ·  **Demo post:** [docs/POST.md](docs/POST.md)
 
 ## The waves
 
