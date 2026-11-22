@@ -13,20 +13,24 @@ function sinePath(width: number, y: number, amp: number, wavelength: number, pha
 }
 
 export function WaveMotif({ width = 980, height = 420 }: { width?: number; height?: number }) {
+  // Each line is drawn twice as wide and drifts sideways at its own speed, so the water feels alive.
   const lines = [
-    { y: height * 0.35, amp: 14, wl: width * 0.9, phase: 0.2, cls: "" },
-    { y: height * 0.55, amp: 22, wl: width * 0.7, phase: 1.4, cls: "" },
-    { y: height * 0.75, amp: 10, wl: width * 0.5, phase: 2.6, cls: "" },
+    { y: height * 0.3, amp: 12, wl: width * 0.9, phase: 0.2, dur: 46, op: 0.55 },
+    { y: height * 0.52, amp: 22, wl: width * 0.7, phase: 1.4, dur: 34, op: 0.7 },
+    { y: height * 0.74, amp: 10, wl: width * 0.5, phase: 2.6, dur: 58, op: 0.5 },
   ];
-  // The drifting wave is drawn twice as wide so it can loop without a gap.
-  const drift = sinePath(width * 2, height * 0.5, 30, width * 0.8, 0.6);
+  // wavelength divides the drift distance evenly so the loop is seamless
+  const main = sinePath(width * 2, height * 0.5, 30, width / 1.25, 0.6);
   return (
     <svg width={width} height={height} viewBox={`0 0 ${width} ${height}`} aria-hidden="true" className="wave-motif">
       {lines.map((l, i) => (
-        <path key={i} d={sinePath(width, l.y, l.amp, l.wl, l.phase)} fill="none" stroke="var(--pale)" strokeWidth={1} />
+        <g key={i} className="wm-drift" style={{ animationDuration: `${l.dur}s`, animationDirection: i % 2 ? "reverse" : "normal" }}>
+          <path d={sinePath(width * 2, l.y, l.amp, width / Math.round(width / l.wl), l.phase)} fill="none" stroke="#b9c3d1" strokeWidth={1.1} opacity={l.op} />
+        </g>
       ))}
-      <g className="wave-drift">
-        <path d={drift} fill="none" stroke="var(--water)" strokeWidth={1.25} opacity={0.35} />
+      <g className="wm-drift wm-main">
+        <path d={main} fill="none" stroke="var(--water)" strokeWidth={1.6} opacity={0.55} />
+        <path className="wm-pulse" d={main} fill="none" stroke="var(--water)" strokeWidth={2.6} strokeLinecap="round" pathLength={100} />
       </g>
     </svg>
   );
