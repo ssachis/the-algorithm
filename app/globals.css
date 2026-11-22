@@ -1140,3 +1140,22 @@ html, body { overflow-x: hidden; }
 /* lane waves stay, but quieter so the currents lead */
 .cc-paths .cc-field { stroke: rgba(36, 87, 214, .12) !important; stroke-width: 1.4; }
 .cc-paths .cc-field:nth-of-type(2n) { stroke: rgba(140, 155, 178, .22) !important; }
+
+/* zoom / fit / tour toolbar sits above the canvas layer so it can be clicked */
+.cc-toolbar { z-index: 7; }
+
+/* Insights tab: quiet editorial column, same voice as the playbook */
+.fs-canvas .insights { height: 100vh; overflow: auto; padding: 96px 28px 120px; }
+.insights { max-width: 720px; margin: 0 auto; }
+.ins-sec { padding: 28px 0 32px; border-bottom: 1px solid var(--line); }
+.ins-sec:last-child { border-bottom: 0; }
+.ins-sec h3 { font-size: 26px; line-height: 1.25; margin: 10px 0 8px; font-weight: 400; }
+.ins-p { font-size: 14px; color: var(--ink-2); margin: 0 0 18px; line-height: 1.6; }
+.ins-note { font-size: 12px; color: var(--ink-3); margin: 14px 0 0; }
+.ins-bars { display: grid; grid-template-columns: repeat(6, 1fr); gap: 14px; height: 140px; align-items: end; }
+.ins-bar { display: flex; flex-direction: column; align-items: center; justify-content: flex-end; height: 100%; gap: 6px; }
+.ins-fill { width: 100%; max-width: 44px; min-height: 2px; border-radius: 8px 8px 3px 3px; background: var(--mist); box-shadow: inset 0 0 0 1px var(--line); transition: height .8s var(--ease); }
+.ins-bar:last-child .ins-fill { background: var(--water); box-shadow: none; opacity: .75; }
+.ins-n { font-size: 12px; color: var(--ink-2); font-variant-numeric: tabular-nums; }
+.ins-m { font-size: 11px; color: var(--ink-3); letter-spacing: .06em; text-transform: uppercase; }
+.fs-canvas .insights .list { height: auto; overflow: visible; padding: 4px 0 0; }

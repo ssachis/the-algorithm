@@ -12,6 +12,7 @@ import HowItWorks from "@/components/HowItWorks";
 import Logo from "@/components/Logo";
 import Lede from "@/components/Lede";
 import Playbook from "@/components/Playbook";
+import Insights from "@/components/Insights";
 import ShareCard from "@/components/ShareCard";
 import { TwinCard } from "@/components/Sources";
 import type { AnalyzeResponse } from "@/lib/types";
@@ -32,7 +33,7 @@ export default function Home() {
   const [data, setData] = useState<AnalyzeResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [mode, setMode] = useState<Mode>("views");
-  const [view, setView] = useState<"waves" | "grid" | "list">("waves");
+  const [view, setView] = useState<"waves" | "grid" | "list" | "insights">("waves");
   const [sort, setSort] = useState<Sort>("similar");
   const [selectedId, setSelectedId] = useState<string>("");
   const [showWhy, setShowWhy] = useState(false);
@@ -207,21 +208,23 @@ export default function Home() {
                     />
                   ))}
                 </div>
-              ) : (
+              ) : view === "list" ? (
                 <VideoList videos={data.similar} sort={sort} selectedId={selectedId} onSelect={setSelectedId} />
+              ) : (
+                <Insights original={data.original} videos={data.similar} selectedId={selectedId} onSelect={setSelectedId} />
               )}
 
 
               <div className="dock" role="toolbar" aria-label="View options">
                 <div className="dock-seg">
-                  {(["waves", "grid", "list"] as const).map((v) => (
+                  {(["waves", "grid", "list", "insights"] as const).map((v) => (
                     <button key={v} aria-pressed={view === v} onClick={() => setView(v)}>
                       {v[0].toUpperCase() + v.slice(1)}
                     </button>
                   ))}
                 </div>
-                <span className="dock-sep" />
-                {view !== "list" ? (
+                {view !== "insights" && <span className="dock-sep" />}
+                {view === "insights" ? null : view !== "list" ? (
                   <ModeToggle mode={mode} onChange={setMode} />
                 ) : (
                   <div className="dock-seg">
