@@ -11,7 +11,7 @@ import Verdict from "@/components/Verdict";
 import HowItWorks from "@/components/HowItWorks";
 import Logo from "@/components/Logo";
 import ShareCard from "@/components/ShareCard";
-import { SourceChips, TwinCard } from "@/components/Sources";
+import { TwinCard } from "@/components/Sources";
 import type { AnalyzeResponse } from "@/lib/types";
 
 type Phase = "idle" | "loading" | "done";
@@ -149,10 +149,7 @@ export default function Home() {
             >
               <Logo />
             </a>
-            <span className="fs-query">
-              {data.query}
-              {data.source === "mock" ? " · illustrative" : ""}
-            </span>
+            <span className="fs-query" />
             <nav className="fs-actions">
               <button className="ghost" aria-pressed={showWhy} onClick={() => setShowWhy((v) => !v)}>
                 Why
@@ -197,7 +194,6 @@ export default function Home() {
                 <VideoList videos={data.similar} sort={sort} selectedId={selectedId} onSelect={setSelectedId} />
               )}
 
-              <SourceChips sources={data.verdict.trend.sources} />
 
               <div className="dock" role="toolbar" aria-label="View options">
                 <div className="dock-seg">

@@ -626,3 +626,4 @@ main.shell:has(.fs) { max-width: none; padding: 0; }
 @media (prefers-reduced-motion: reduce) { .logo-mark path { animation: none; stroke-dashoffset: 0; } }
 .wordmark .logo, .wordmark .logo-word { color: var(--deep); }
 .logo-img { height: 1.3em; width: auto; display: block; mix-blend-mode: multiply; }
+.logo-img { height: 1.05em; }
