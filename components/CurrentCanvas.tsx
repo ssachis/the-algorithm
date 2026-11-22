@@ -436,7 +436,15 @@ export default function CurrentCanvas({
               <div
                 key={v.id}
                 className={`cc-pos ${spot === v.id ? "on-top" : ""}`}
-                style={{ transform: `translate(${p.x}px, ${p.y}px)`, width: p.w }}
+                style={{
+                  transform: `translate(${p.x}px, ${p.y}px)`,
+                  width: p.w,
+                  // depth: the deeper the lane, the cooler and dimmer the Short
+                  filter: (() => {
+                    const t = layout.lanes.length > 1 ? p.lane / (layout.lanes.length - 1) : 0;
+                    return `saturate(${(1 - 0.28 * t).toFixed(2)}) brightness(${(1 - 0.1 * t).toFixed(2)})`;
+                  })(),
+                }}
                 onPointerDown={(e) => e.stopPropagation()}
               >
                 <div className={`cc-in ${spot === v.id ? "cc-spot" : ""} ${pulseId === v.id ? "cc-pulse" : ""}`} style={{ animationDelay: `${200 + i * 40}ms` }}>
