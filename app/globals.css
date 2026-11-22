@@ -1130,3 +1130,13 @@ html, body { overflow-x: hidden; }
 @media (prefers-reduced-motion: reduce) { .cc-paths .cc-field { animation: none !important; } }
 .cc-paths .cc-field { stroke: rgba(36, 87, 214, .3); stroke-width: 2; }
 .cc-paths .cc-field:nth-of-type(2n) { stroke: rgba(140, 155, 178, .45); }
+
+/* currents from YOUR Short to every similar Short (the sources), soft and solid */
+.cc-paths .cc-path {
+  display: inline !important; fill: none; stroke: rgba(36, 87, 214, .28) !important; stroke-width: 1.2 !important;
+  stroke-dasharray: none !important; opacity: 1 !important; animation: cc-fade 1.2s var(--ease) .6s both !important;
+}
+.cc-paths .cc-path.hover, .cc-paths .cc-path.on { stroke: var(--water) !important; stroke-width: 2 !important; }
+/* lane waves stay, but quieter so the currents lead */
+.cc-paths .cc-field { stroke: rgba(36, 87, 214, .12) !important; stroke-width: 1.4; }
+.cc-paths .cc-field:nth-of-type(2n) { stroke: rgba(140, 155, 178, .22) !important; }
