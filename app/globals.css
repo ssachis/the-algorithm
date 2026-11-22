@@ -176,3 +176,8 @@ button { font: inherit; cursor: pointer; }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; }
 }
+
+/* share your ripple (components/ShareCard.tsx) */
+.share { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.share-btn { background: var(--deep); }
+.share-btn:hover { background: var(--water); }
