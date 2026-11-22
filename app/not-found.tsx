@@ -1,11 +1,11 @@
 import Link from "next/link";
-import Rings from "@/components/Rings";
+import { WaveMotif } from "@/components/WaveMotif";
 
 export default function NotFound() {
   return (
     <main className="nf">
       <div className="nf-rings">
-        <Rings size={420} />
+        <WaveMotif width={420} height={220} />
       </div>
       <div className="nf-inner rise">
         <span className="eyebrow">404</span>

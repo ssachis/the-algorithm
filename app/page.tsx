@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import DropInput from "@/components/DropInput";
-import Rings from "@/components/Rings";
+import { WaveLoader, WaveMotif } from "@/components/WaveMotif";
 import { type Mode } from "@/components/RippleMap";
 import CurrentCanvas, { ShortCard } from "@/components/CurrentCanvas";
 import ModeToggle from "@/components/ModeToggle";
@@ -86,7 +86,7 @@ export default function Home() {
       {phase === "idle" && (
         <section className="hero">
           <div className="hero-rings">
-            <Rings size={980} />
+            <WaveMotif width={980} height={420} />
           </div>
           <div className="hero-inner rise">
             <span className="eyebrow">Every idea makes waves.</span>
@@ -114,7 +114,7 @@ export default function Home() {
       {phase === "loading" && (
         <section className="loading">
           <div>
-            <Rings size={260} />
+            <WaveLoader width={260} />
             <p className="serif" style={{ fontSize: 24 }}>{LOADING_LINES[line]}</p>
           </div>
         </section>
