@@ -48,7 +48,9 @@ export function observedFacts(original: Video, similar: Video[]): string[] {
 /** Why a video was picked as similar: shared hashtags and title words. */
 export function sharedTerms(a: Video, b: Video): { tags: string[]; words: string[] } {
   const ta = new Set(a.hashtags.length ? a.hashtags : extractHashtags(a.title));
-  const tags = (b.hashtags.length ? b.hashtags : extractHashtags(b.title)).filter((t) => ta.has(t));
+  const tags = (b.hashtags.length ? b.hashtags : extractHashtags(b.title)).filter(
+    (t) => ta.has(t) && extractHashtags(t).length > 0
+  );
   const ka = keywords(a.title);
   const words = Array.from(keywords(b.title)).filter((w) => ka.has(w));
   return { tags, words };

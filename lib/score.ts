@@ -28,8 +28,16 @@ export function keywords(text: string): Set<string> {
   );
 }
 
+/** Hashtags that say nothing about the idea; ignored for similarity. */
+const GENERIC_TAGS = new Set([
+  "#shorts", "#short", "#youtubeshorts", "#ytshorts", "#viral", "#viralshorts", "#viralvideo", "#fyp", "#foryou",
+  "#foryoupage", "#trending", "#trend", "#explore", "#explorepage", "#reels", "#subscribe", "#youtube", "#tiktok",
+]);
+
 export function extractHashtags(text: string): string[] {
-  return Array.from(new Set((text.match(/#\w+/g) ?? []).map((h) => h.toLowerCase())));
+  return Array.from(new Set((text.match(/#\w+/g) ?? []).map((h) => h.toLowerCase()))).filter(
+    (h) => !GENERIC_TAGS.has(h)
+  );
 }
 
 function jaccard(a: Set<string>, b: Set<string>): number {

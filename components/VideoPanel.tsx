@@ -1,6 +1,7 @@
 import type { Video } from "@/lib/types";
 import { formatCount, formatX, perfLevel, PERF_DEFINITION, PERF_LABEL } from "@/lib/score";
 import { sharedTerms } from "@/lib/insights";
+import ShortPlayer from "./ShortPlayer";
 
 function ago(iso: string) {
   const d = Math.round((Date.now() - new Date(iso).getTime()) / 86_400_000);
@@ -11,11 +12,15 @@ export default function VideoPanel({ video, original }: { video: Video; original
   const isOriginal = video.id === original.id;
   const lvl = perfLevel(video.outperformance);
   const why = isOriginal ? null : sharedTerms(original, video);
+  const title = video.title.replace(/#\w+/g, "").trim();
 
   return (
     <aside className="card card-pad panel rise d1" aria-live="polite">
       <span className="eyebrow">{isOriginal ? "Your Short" : "Similar Short"}</span>
-      <h3 className="serif">{video.title.replace(/#\w+/g, "").trim()}</h3>
+
+      <ShortPlayer key={video.id} video={video} title={title} />
+
+      <h3 className="serif">{title}</h3>
       <div className="faint" style={{ fontSize: 13 }}>
         {video.channelTitle} · {ago(video.publishedAt)} · {video.durationSec}s
       </div>
@@ -26,7 +31,8 @@ export default function VideoPanel({ video, original }: { video: Video; original
 
       <div className="stats">
         <div className="stat hero-stat">
-          <div className="v">{formatX(video.outperformance)}</div>
+          {/* Hidden subscriber counts show as "hidden", never as a dash or a crash. */}
+          <div className="v">{video.outperformance == null ? "hidden" : formatX(video.outperformance)}</div>
           <div className="k">views ÷ subscribers</div>
         </div>
         <div className="stat">
