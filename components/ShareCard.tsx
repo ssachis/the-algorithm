@@ -138,7 +138,7 @@ export function buildShareSvg(data: AnalyzeResponse, mode: Mode): string {
   ${topSub ? `<text x="${CARD_W / 2}" y="1255" text-anchor="middle" font-family="${SANS}" font-size="22" fill="${INK_2}">${topSub}</text>` : ""}
 
   <line x1="80" x2="${CARD_W - 80}" y1="1290" y2="1290" stroke="${LINE}" stroke-width="2"/>
-  <text x="80" y="1338" font-family="${SERIF}" font-size="34" fill="${INK}">the algorithm<tspan fill="${WATER}">.</tspan></text>
+  <text x="80" y="1338" font-family="${SERIF}" font-size="34" fill="${INK}">wave<tspan fill="${WATER}">.</tspan></text>
   <text x="${CARD_W - 80}" y="1338" text-anchor="end" font-family="${SANS}" font-size="20" fill="${INK_3}">Public metrics only</text>
 </svg>`;
 }
@@ -175,7 +175,7 @@ export default function ShareCard({ data, mode }: { data: AnalyzeResponse; mode:
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = `the-algorithm-${data.query.toLowerCase().replace(/[^a-z0-9]+/g, "-").slice(0, 40) || "ripple"}.png`;
+      a.download = `wave-${data.query.toLowerCase().replace(/[^a-z0-9]+/g, "-").slice(0, 40) || "ripple"}.png`;
       document.body.appendChild(a);
       a.click();
       a.remove();

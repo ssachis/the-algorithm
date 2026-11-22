@@ -6,7 +6,7 @@ const sans = Inter({ subsets: ["latin"], variable: "--font-sans" });
 const serif = Instrument_Serif({ subsets: ["latin"], weight: "400", style: ["normal", "italic"], variable: "--font-serif" });
 
 export const metadata: Metadata = {
-  title: "The Algorithm — Same idea. Different outcomes.",
+  title: "Wave — Same idea. Different outcomes.",
   description:
     "Paste a YouTube Short, see similar Shorts ripple out from yours, and learn why some took off.",
 };

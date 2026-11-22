@@ -1,4 +1,4 @@
-# The Algorithm — instructions for coding agents
+# Wave — instructions for coding agents
 
 **Product:** Paste a YouTube Short → find similar Shorts on the same idea → show them as a ripple map
 → explain why some took off (content, timing, creator size) → give one next experiment.
