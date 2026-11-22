@@ -228,6 +228,58 @@ export default function CurrentCanvas({
     focusOn(id);
   };
 
+  // Keyboard: arrows move the selection to the nearest card in that direction (same lane for
+  // left/right; the lane above/below for up/down). +/− zoom. Selection recenters, as with a click.
+  const neighbour = (fromId: string, dir: "left" | "right" | "up" | "down"): string | null => {
+    const from = layout.pos[fromId];
+    if (!from) return null;
+    let best: { id: string; score: number } | null = null;
+    for (const v of [original, ...videos]) {
+      if (v.id === fromId) continue;
+      const p = layout.pos[v.id];
+      const dx = p.x - from.x;
+      const dy = p.y - from.y;
+      const sameLane = Math.abs(dy) < 1;
+      let ok = false;
+      let score = 0;
+      if (dir === "left" || dir === "right") {
+        ok = sameLane && (dir === "right" ? dx > 0 : dx < 0);
+        score = Math.abs(dx);
+      } else {
+        const wantDown = dir === "down";
+        const laneGap = Math.round(dy / LANE_H);
+        ok = !sameLane && (wantDown ? laneGap > 0 : laneGap < 0);
+        // Adjacent lane first, then the horizontally closest card in it.
+        score = Math.abs(laneGap) * 100000 + Math.abs(dx);
+      }
+      if (ok && (!best || score < best.score)) best = { id: v.id, score };
+    }
+    return best?.id ?? null;
+  };
+
+  const onKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "+" || e.key === "=") {
+      e.preventDefault();
+      zoomAt(1.25, box.w / 2, box.h / 2, true);
+      return;
+    }
+    if (e.key === "-" || e.key === "_") {
+      e.preventDefault();
+      zoomAt(1 / 1.25, box.w / 2, box.h / 2, true);
+      return;
+    }
+    const dir = ({ ArrowLeft: "left", ArrowRight: "right", ArrowUp: "up", ArrowDown: "down" } as const)[
+      e.key as "ArrowLeft"
+    ];
+    if (!dir) return;
+    e.preventDefault();
+    const next = neighbour(selectedId || original.id, dir);
+    if (next) {
+      onSelect(next);
+      focusOn(next);
+    }
+  };
+
   const zoomClass = view.k < 0.55 ? "z-far" : view.k < 0.95 ? "z-mid" : "z-near";
   const focused = selectedId && selectedId !== original.id;
   const o = layout.pos[original.id];
@@ -236,6 +288,10 @@ export default function CurrentCanvas({
     <div className="cc">
       <div
         ref={boxRef}
+        tabIndex={0}
+        role="application"
+        aria-label="Similar Shorts canvas. Arrow keys move between Shorts; plus and minus zoom."
+        onKeyDown={onKeyDown}
         className={`cc-box ${drag.current?.moved ? "grabbing" : ""}`}
         onPointerDown={onPointerDown}
         onPointerMove={onPointerMove}
@@ -252,9 +308,7 @@ export default function CurrentCanvas({
         >
           {/* lanes */}
           {layout.lanes.map((l, i) => (
-            <div key={`${mode}-${l.key}`} className="cc-lane" style={{ top: TOP + i * LANE_H, height: LANE_H }}>
-              <span className="cc-lane-label">{l.label}</span>
-            </div>
+            <div key={`${mode}-${l.key}`} className="cc-lane" style={{ top: TOP + i * LANE_H, height: LANE_H }} />
           ))}
 
           {/* currents: fine wave paths from your Short to each similar Short */}
@@ -303,6 +357,19 @@ export default function CurrentCanvas({
               </div>
             );
           })}
+        </div>
+
+        {/* Lane labels stay readable at every zoom: fixed size, pinned to the left, following the lane's height. */}
+        <div className="cc-labels" aria-hidden>
+          {layout.lanes.map((l, i) => (
+            <span
+              key={`${mode}-lbl-${l.key}`}
+              className="cc-lane-tag"
+              style={{ top: view.y + (TOP + i * LANE_H + LANE_H / 2) * view.k }}
+            >
+              {l.label}
+            </span>
+          ))}
         </div>
 
         <div className="cc-axis" aria-hidden>
