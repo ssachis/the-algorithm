@@ -146,7 +146,8 @@ export default function CurrentCanvas({
   }, []);
 
   const fit = useCallback(() => {
-    const k = Math.min(box.w / layout.W, box.h / layout.H) * 0.96;
+    // Never below 45%: at smaller scales the cards become unreadable on a laptop.
+    const k = Math.max(0.45, Math.min(box.w / layout.W, box.h / layout.H) * 0.96);
     setAnimate(true);
     setView({ k, x: (box.w - layout.W * k) / 2, y: (box.h - layout.H * k) / 2 });
   }, [box, layout]);
@@ -171,6 +172,11 @@ export default function CurrentCanvas({
     if (fitted.current) fit(); // re-fit when lanes change (mode toggle)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mode]);
+  // Re-fit when the canvas is resized (inspector opens or closes, window resizes).
+  useEffect(() => {
+    if (fitted.current && box.w > 0) fit();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [box.w, box.h]);
 
   const zoomAt = useCallback((factor: number, cx: number, cy: number, anim: boolean) => {
     setAnimate(anim);
