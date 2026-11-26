@@ -161,3 +161,8 @@ vite.config.ts.timestamp-*
 .env.local
 .next/
 next-env.d.ts
+
+# Cloudflare / OpenNext
+.open-next
+.wrangler
+.dev.vars
