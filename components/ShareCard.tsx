@@ -190,7 +190,7 @@ export default function ShareCard({ data, mode }: { data: AnalyzeResponse; mode:
   return (
     <div className="share">
       <button className="btn share-btn" onClick={download} disabled={busy}>
-        {busy ? "Making your card…" : "Share your wave"}
+        {busy ? "Making your card…" : <>Share<span className="share-long"> your wave</span></>}
       </button>
       {error && <span className="error">{error}</span>}
     </div>

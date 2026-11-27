@@ -117,6 +117,11 @@ export default function CurrentCanvas({
   const [view, setView] = useState({ x: 0, y: 0, k: 0.6 });
   const [animate, setAnimate] = useState(true);
   const drag = useRef<{ x: number; y: number; vx: number; vy: number; moved: boolean } | null>(null);
+  // Touch: every active pointer, and the last two-finger distance/midpoint while pinching.
+  const pointers = useRef(new Map<number, { x: number; y: number }>());
+  const pinch = useRef<{ d: number; cx: number; cy: number } | null>(null);
+  const viewRef = useRef(view);
+  viewRef.current = view;
   const fitted = useRef(false);
   const [compareId, setCompareId] = useState<string | null>(null);
 
@@ -191,7 +196,9 @@ export default function CurrentCanvas({
       if (!p) return;
       setAnimate(true);
       moved(true);
-      setView({ k, x: box.w / 2 - (p.x + p.w / 2) * k, y: box.h / 2 - (p.y + p.h / 2) * k });
+      // On phones the inspector opens as a bottom sheet, so centre the Short in the visible top part.
+      const cy = box.w <= 880 ? box.h * 0.28 : box.h / 2;
+      setView({ k, x: box.w / 2 - (p.x + p.w / 2) * k, y: cy - (p.y + p.h / 2) * k });
     },
     [box, layout, view.k]
   );
@@ -311,8 +318,24 @@ export default function CurrentCanvas({
     return () => el.removeEventListener("wheel", onWheel);
   }, [zoomAt, stopTour]);
 
+  const midpoint = () => {
+    const [a, b] = Array.from(pointers.current.values());
+    const r = boxRef.current?.getBoundingClientRect();
+    return {
+      d: Math.hypot(a.x - b.x, a.y - b.y),
+      cx: (a.x + b.x) / 2 - (r?.left ?? 0),
+      cy: (a.y + b.y) / 2 - (r?.top ?? 0),
+    };
+  };
   const onPointerDown = (e: React.PointerEvent) => {
     if (touring) stopTour();
+    pointers.current.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    if (pointers.current.size === 2) {
+      // second finger down: switch from drag to pinch
+      pinch.current = midpoint();
+      if (drag.current) drag.current.moved = true;
+      return;
+    }
     drag.current = { x: e.clientX, y: e.clientY, vx: view.x, vy: view.y, moved: false };
   };
   const onPointerMove = (e: React.PointerEvent) => {
@@ -322,6 +345,21 @@ export default function CurrentCanvas({
       const r = el.getBoundingClientRect();
       el.style.setProperty("--mx", `${e.clientX - r.left}px`);
       el.style.setProperty("--my", `${e.clientY - r.top}px`);
+    }
+    if (pointers.current.has(e.pointerId)) pointers.current.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    if (pointers.current.size >= 2 && pinch.current) {
+      const m = midpoint();
+      const prev = pinch.current;
+      pinch.current = m;
+      moved(true);
+      setAnimate(false);
+      setView((v) => {
+        const k = Math.min(Math.max(v.k * (prev.d > 0 ? m.d / prev.d : 1), 0.25), 2.4);
+        const f = k / v.k;
+        // zoom around the previous midpoint, then follow the midpoint as it moves
+        return { k, x: m.cx - (prev.cx - v.x) * f, y: m.cy - (prev.cy - v.y) * f };
+      });
+      return;
     }
     const d = drag.current;
     if (!d) return;
@@ -334,7 +372,16 @@ export default function CurrentCanvas({
     setAnimate(false);
     setView((v) => ({ ...v, x: d.vx + dx, y: d.vy + dy }));
   };
-  const onPointerUp = () => {
+  const onPointerUp = (e: React.PointerEvent) => {
+    pointers.current.delete(e.pointerId);
+    if (pointers.current.size === 1) {
+      // one finger left after a pinch: keep dragging from where the view is now, without a jump
+      pinch.current = null;
+      const [p] = Array.from(pointers.current.values());
+      drag.current = { x: p.x, y: p.y, vx: viewRef.current.x, vy: viewRef.current.y, moved: true };
+      return;
+    }
+    if (pointers.current.size === 0) pinch.current = null;
     setTimeout(() => (drag.current = null), 0);
   };
   const click = (id: string, e?: React.MouseEvent) => {
@@ -447,7 +494,8 @@ export default function CurrentCanvas({
         onPointerDown={onPointerDown}
         onPointerMove={onPointerMove}
         onPointerUp={onPointerUp}
-        onPointerLeave={onPointerUp}
+        onPointerCancel={onPointerUp}
+        onPointerLeave={(e) => e.pointerType === "mouse" && onPointerUp(e)}
       >
         <div
           className={`cc-world ${zoomClass} ${animate ? "anim" : ""} ${touring ? "tour" : ""}`}
@@ -492,7 +540,8 @@ export default function CurrentCanvas({
                   transform: `translate(${p.x}px, ${p.y}px)`,
                   width: p.w,
                 }}
-                onPointerDown={(e) => e.stopPropagation()}
+                // Mouse: a press on a card is a click, not a drag. Touch: let a finger on a card pan the canvas too.
+                onPointerDown={(e) => e.pointerType === "mouse" && e.stopPropagation()}
                 onPointerEnter={() => setHoverId(v.id)}
                 onPointerLeave={() => setHoverId((h) => (h === v.id ? null : h))}
               >

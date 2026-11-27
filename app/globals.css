@@ -1186,3 +1186,97 @@ html, body { overflow-x: hidden; }
 .sheet::-webkit-scrollbar { width: 8px; }
 .sheet::-webkit-scrollbar-track { background: transparent; }
 .sheet::-webkit-scrollbar-thumb { background: var(--sage); border-radius: 999px; }
+
+/* ---------- Mobile (phones and small tablets) ---------- */
+/* Touch: the canvas handles its own drag and pinch; buttons skip the double-tap zoom delay. */
+.cc-box { touch-action: none; -webkit-user-select: none; user-select: none; }
+button, .linkbtn, .cc-card { touch-action: manipulation; }
+@media (hover: none) {
+  .cc-card:hover { transform: none; }
+  .pb-hooks button:hover { transform: none; }
+}
+/* Phone browsers hide part of 100vh behind the address bar: use the visible height where supported. */
+@supports (height: 100dvh) {
+  .fs, .fs-body, .fs-inspector { height: 100dvh; }
+  .fs-canvas .cc-box { height: 100dvh !important; }
+  .fs-canvas .waves-grid, .fs-canvas .list, .fs-canvas .insights { height: 100dvh; }
+  .sheet { max-height: calc(100dvh - 96px); }
+}
+
+/* 880px matches the older breakpoint that stacked the inspector under the canvas (where it was clipped). */
+@media (max-width: 880px) {
+  /* top bar: tighter, every action still reachable */
+  .fs-top { height: calc(56px + env(safe-area-inset-top)); gap: 8px; padding: env(safe-area-inset-top) 10px 0; }
+  .fs-top .wordmark { font-size: 19px; }
+  .fs-top .fs-query { display: block; flex: 1; min-width: 0; }
+  .fs-actions { gap: 0; flex-shrink: 0; }
+  .fs-actions .ghost, .fs-actions .share-btn { font-size: 12px; padding: 8px 8px; }
+  .share-long { display: none; }
+
+  /* headline over the canvas */
+  .cv-lede { top: 60px; left: 16px; right: 16px; max-width: none; }
+  .lede-title { font-size: 27px; margin: 6px 0 6px; }
+  .lede-eyebrow { font-size: 10px; }
+
+  /* inspector and playbook become a bottom sheet over the canvas instead of a side panel */
+  .fs-inspector {
+    position: fixed; z-index: 15; left: 0; right: 0; bottom: 0; top: auto;
+    width: auto; flex: none; height: auto !important; max-height: 68vh;
+    overflow-y: auto; overscroll-behavior: contain;
+    padding: 26px 18px calc(18px + env(safe-area-inset-bottom));
+    border-left: 0; border-top: 1px solid var(--line); border-radius: 20px 20px 0 0;
+    box-shadow: 0 -18px 50px rgba(14, 23, 38, .18);
+    animation: sheet-in-mobile .45s var(--ease) both;
+  }
+  .fs-inspector::before {
+    content: ""; position: absolute; top: 9px; left: 50%; width: 38px; height: 4px; margin-left: -19px;
+    border-radius: 999px; background: var(--line);
+  }
+  .fs-close { top: 8px; right: 8px; font-size: 26px; padding: 8px 12px; }
+  .pb .fs-close { top: -18px; right: -10px; }
+  .fs-inspector .player { max-width: 150px; margin: 4px auto 16px; }
+  .fs-inspector h3 { font-size: 23px; }
+  .fs-inspector .stats { grid-template-columns: repeat(2, 1fr); }
+  .fs-inspector .stat .v { font-size: 22px; }
+  .pb-title { font-size: 26px; }
+
+  /* bottom controls: dock centred, zoom toolbar lifted above it so they never overlap */
+  .dock {
+    bottom: calc(14px + env(safe-area-inset-bottom)); max-width: calc(100% - 20px);
+    flex-wrap: wrap; justify-content: center; border-radius: 22px;
+  }
+  .dock-seg button, .dock .toggle button { font-size: 12px; padding: 8px 11px; }
+  .dock-sep { display: none; }
+  .cc-toolbar { bottom: calc(72px + env(safe-area-inset-bottom)) !important; right: 10px !important; }
+  .cc-toolbar .cc-pct, .cc-toolbar .cc-sep { display: none; }
+  .cc-toolbar button { padding: 8px 11px; }
+  .cc-hint { bottom: calc(124px + env(safe-area-inset-bottom)) !important; white-space: nowrap; }
+  .src-chips { display: none; }
+  .cc-lane-tag { font-size: 13px; left: 8px; }
+
+  /* grid, list and insights views */
+  .fs-canvas .waves-grid, .fs-canvas .list { padding-top: 64px; padding-bottom: 130px; }
+  .waves-grid { grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 10px; padding-left: 12px; padding-right: 12px; }
+  .fs-canvas .insights { padding: 72px 16px 140px; }
+  .ins-sec h3 { font-size: 22px; }
+  .ins-bars { gap: 8px; height: 120px; }
+
+  /* "Why" sheet */
+  .sheet {
+    width: calc(100% - 16px); bottom: 8px; padding: 46px 16px 8px; border-radius: 18px;
+    max-height: calc(100vh - 72px); overscroll-behavior: contain;
+  }
+  .sheet .twin-card { padding: 12px 14px; }
+  .cc-tray { margin: 10px 8px 0; padding: 12px; overflow-x: auto; }
+
+  /* landing */
+  .hero { min-height: 64vh; }
+  .hero p.lede { font-size: 15px; margin-bottom: 28px; }
+  .drop { padding: 5px 5px 5px 16px; }
+  .drop input { font-size: 16px; } /* 16px stops iOS zooming into the field */
+}
+@supports (height: 100dvh) {
+  @media (max-width: 880px) { .sheet { max-height: calc(100dvh - 72px); } }
+}
+@keyframes sheet-in-mobile { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .fs-inspector { animation: none; } }
