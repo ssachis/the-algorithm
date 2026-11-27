@@ -1280,3 +1280,24 @@ button, .linkbtn, .cc-card { touch-action: manipulation; }
 }
 @keyframes sheet-in-mobile { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: none; } }
 @media (prefers-reduced-motion: reduce) { .fs-inspector { animation: none; } }
+
+/* ---------- Mobile hero: give the waves their own band so no text sits on the lines ---------- */
+@media (max-width: 720px) {
+  .hero {
+    min-height: auto; display: flex; flex-direction: column; align-items: center;
+    padding: 44px 0 0;
+  }
+  .hero-inner { order: 1; padding: 0 4px; }
+  .hero .eyebrow { font-size: 11px; letter-spacing: .2em; }
+  .hero h1 { font-size: clamp(36px, 11.2vw, 44px); line-height: 1.04; margin: 14px 0 16px; }
+  .hero p.lede { font-size: 15px; line-height: 1.6; max-width: 330px; margin: 0 auto 26px; color: var(--ink-2); }
+  /* the water sits below the call to action, like a horizon, instead of behind the words */
+  .hero-rings {
+    order: 2; position: relative; inset: auto; width: 100vw; height: 170px; margin-top: 6px;
+    -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 18%, #000 82%, transparent 100%);
+            mask-image: linear-gradient(90deg, transparent 0%, #000 18%, #000 82%, transparent 100%);
+  }
+  .hero-rings svg { width: auto; height: 170px; max-width: none; -webkit-mask-image: none; mask-image: none; }
+  .how { margin-top: 8px; }
+}
+
