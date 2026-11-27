@@ -1301,3 +1301,27 @@ button, .linkbtn, .cc-card { touch-action: manipulation; }
   .how { margin-top: 8px; }
 }
 
+
+/* ---------- Mobile how-it-works: the three steps take turns in one spot ---------- */
+@media (max-width: 700px) {
+  .how-steps { display: grid; grid-template-columns: 1fr; gap: 0; }
+  .how-step {
+    grid-area: 1 / 1; opacity: 0;
+    animation: step-swap 7.5s var(--ease) .6s infinite both;
+  }
+  .how-step:nth-child(2) { animation-delay: 3.1s; }
+  .how-step:nth-child(3) { animation-delay: 5.6s; }
+  /* the glow on each step stays in time with its turn */
+  .how-title { animation-delay: .6s; }
+  .how-step:nth-child(2) .how-title { animation-delay: 3.1s; }
+  .how-step:nth-child(3) .how-title { animation-delay: 5.6s; }
+}
+@keyframes step-swap {
+  0% { opacity: 0; transform: translateY(10px); filter: blur(3px); }
+  5%, 30% { opacity: 1; transform: none; filter: none; }
+  36%, 100% { opacity: 0; transform: translateY(-10px); filter: blur(3px); }
+}
+@media (max-width: 700px) and (prefers-reduced-motion: reduce) {
+  .how-steps { gap: 12px; }
+  .how-step { grid-area: auto; opacity: 1; animation: none; }
+}
